@@ -3,7 +3,7 @@ $features = [
   [
     'id'    => 'parcelles',
     'label' => __('Parcelles illimitées'),
-    'icon'  => 'map',
+    'fa'    => 'fa-regular fa-map',
     'title' => __('Tout votre patrimoine. Un seul endroit.'),
     'pitch' => __("Qu'il s'agisse d'un seul bien ou d'un portefeuille réparti sur plusieurs cantons, BAT-ID vous permet d'enregistrer l'ensemble de vos parcelles sans aucune limite. Chaque bien est géolocalisé, référencé et consultable en quelques secondes, depuis n'importe quel appareil. Fini les registres épars, les recherches manuelles et les données incomplètes — votre patrimoine foncier est enfin centralisé, précis et toujours à jour."),
     'plans' => [
@@ -15,7 +15,7 @@ $features = [
   [
     'id'    => 'veille-officielle',
     'label' => __('Veille officielle'),
-    'icon'  => 'bell',
+    'fa'    => 'fa-regular fa-bell',
     'title' => __('Ne manquez plus rien de ce qui touche vos biens.'),
     'pitch' => __("Chaque jour, des décisions administratives, des enquêtes publiques et des modifications réglementaires sont publiées dans les bulletins officiels suisses — fédéraux, cantonaux et communaux. Sans veille active, ces publications passent inaperçues, parfois au détriment de vos intérêts. BAT-ID surveille automatiquement l'environnement juridique et foncier de vos parcelles sélectionnées et vous alerte dès qu'une publication vous concerne. Une protection passive, continue, et sans effort de votre part."),
     'plans' => [
@@ -27,7 +27,7 @@ $features = [
   [
     'id'    => 'veille-robotisee',
     'label' => __('Veille robotisée'),
-    'icon'  => 'cpu',
+    'fa'    => 'fa-solid fa-robot',
     'title' => __('Votre robot de veille travaille pendant que vous dormez.'),
     'pitch' => __("Au-delà des bulletins officiels, BAT-ID déploie un robot d'exploration qui collecte en continu toutes les informations publiques pertinentes autour de vos parcelles : règlements de construction, restrictions de droit public (RDPPF), zones protégées, potentiel de développement, données communales. Ces informations sont synthétisées automatiquement dans des fiches claires par parcelle. Vous bénéficiez d'une connaissance approfondie de votre patrimoine et de son environnement réglementaire, sans effectuer la moindre recherche vous-même."),
     'plans' => [
@@ -39,7 +39,7 @@ $features = [
   [
     'id'    => 'stockage',
     'label' => __('Stockage sécurisé'),
-    'icon'  => 'database',
+    'fa'    => 'fa-regular fa-hard-drive',
     'title' => __("L'espace qu'il vous faut, là où vous en avez besoin."),
     'pitch' => __("Photos de chantier, factures d'artisans, actes notariés, contrats de bail — la gestion d'un bien immobilier génère une masse documentaire considérable. BAT-ID vous offre un espace de stockage sécurisé, dimensionné selon votre usage, pour conserver l'intégralité de vos documents liés à chaque parcelle. Chaque fichier est horodaté, versionné et accessible instantanément. Votre mémoire documentaire est enfin à la hauteur de la valeur de votre patrimoine."),
     'plans' => [
@@ -51,7 +51,7 @@ $features = [
   [
     'id'    => 'cloud',
     'label' => __('Cloud externe'),
-    'icon'  => 'cloud',
+    'fa'    => 'fa-solid fa-cloud',
     'title' => __("Vos documents restent là où vous avez l'habitude de les gérer."),
     'pitch' => __("Vous utilisez déjà un service de stockage en ligne ? BAT-ID se connecte nativement à votre cloud existant — kDrive, Google Drive, OneDrive, Dropbox ou Proton Drive — et établit directement les liaisons entre vos documents et vos parcelles, sans vous imposer de changer vos habitudes. Pour ceux qui privilégient la souveraineté des données, kDrive d'Infomaniak garantit un hébergement intégralement en Suisse, conforme aux exigences les plus strictes en matière de confidentialité."),
     'plans' => [
@@ -63,7 +63,7 @@ $features = [
   [
     'id'    => 'sauvegarde',
     'label' => __('Lot de sauvegarde'),
-    'icon'  => 'shield-check',
+    'fa'    => 'fa-solid fa-shield-halved',
     'title' => __("Vos données toujours protégées, quoi qu'il arrive."),
     'pitch' => __("Votre patrimoine a de la valeur — vos données aussi. Le lot de sauvegarde inclus dans votre abonnement garantit que l'ensemble de vos documents, alertes, annotations et informations patrimoniales sont régulièrement sauvegardés de manière sécurisée. En cas d'incident, de perte ou de changement d'appareil, vous retrouvez l'intégralité de votre espace BAT-ID tel que vous l'avez laissé. Une tranquillité d'esprit que vous ne devriez jamais avoir à négliger."),
     'plans' => [
@@ -75,7 +75,7 @@ $features = [
   [
     'id'    => 'workspace',
     'label' => __('Workspace collaboratif'),
-    'icon'  => 'users',
+    'fa'    => 'fa-solid fa-people-group',
     'title' => __('Gérez votre patrimoine à plusieurs, en toute clarté.'),
     'pitch' => __("Que vous soyez une famille souhaitant impliquer plusieurs membres dans la gestion d'un patrimoine commun, ou une structure professionnelle coordonnant des équipes sur plusieurs portefeuilles clients, BAT-ID vous propose des espaces de travail collaboratifs structurés. Chaque membre dispose d'un niveau d'accès défini — administrateur, gestionnaire, consultant ou lecteur — et accède en temps réel aux parcelles, documents et alertes qui le concernent. Les workspaces professionnels sont totalement étanches entre eux, garantissant la confidentialité de chaque portefeuille client."),
     'plans' => [
@@ -116,9 +116,7 @@ $features = [
         :aria-pressed="active === '{{ $feature['id'] }}'"
         type="button"
       >
-        <span class="fe-pill__icon">
-          @include('components._icon', ['name' => $feature['icon']])
-        </span>
+        <i class="{{ $feature['fa'] }} fe-pill__icon"></i>
         {{ $feature['label'] }}
       </button>
     @endforeach
@@ -140,7 +138,7 @@ $features = [
         {{-- GAUCHE : pitch --}}
         <div class="fe-pitch">
           <div class="fe-pitch__icon">
-            @include('components._icon', ['name' => $feature['icon']])
+            <i class="{{ $feature['fa'] }}"></i>
           </div>
           <h3 class="fe-pitch__title">{{ $feature['title'] }}</h3>
           <p class="fe-pitch__text">{{ $feature['pitch'] }}</p>

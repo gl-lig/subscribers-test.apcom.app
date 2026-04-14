@@ -173,7 +173,7 @@ body, button, input, select, textarea {
 }
 .fe-pill--active svg * { stroke: #ffffff !important; }
 
-.fe-pill__icon { width: 15px; height: 15px; display: flex; flex-shrink: 0; opacity: 0.65; }
+.fe-pill__icon { font-size: 13px; flex-shrink: 0; opacity: 0.65; }
 .fe-pill--active .fe-pill__icon { opacity: 1; }
 
 /* Panel animations (Alpine x-transition) */
@@ -218,7 +218,7 @@ body, button, input, select, textarea {
   margin-bottom: 22px;
   color: #3DFF9E;
 }
-.fe-pitch__icon svg { width: 24px; height: 24px; }
+.fe-pitch__icon i { font-size: 22px; }
 
 .fe-pitch__title {
   font-size: 20px; font-weight: 600;
