@@ -36,7 +36,7 @@ class PricingPage extends Component
 
     public function render()
     {
-        $types = SubscriptionType::online()->ordered()->with('translations')->get();
+        $types = SubscriptionType::online()->where('is_free', false)->ordered()->with('translations')->get();
         $locale = app()->getLocale();
 
         // Max discount per duration for badge on selector
