@@ -92,7 +92,7 @@
                         $monthlyPrice = $totalPrice / $selectedDuration;
                     @endphp
                     <div wire:key="plan-{{ $type->id }}-{{ $selectedDuration }}"
-                         class="w-[82vw] md:w-[calc((100%-4rem)/3)] flex-shrink-0 flex flex-col rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200 transition hover:shadow-lg hover:ring-batid-bleu/30"
+                         class="w-[82vw] md:w-[calc((100%-4rem)/3)] flex-shrink-0 flex flex-col rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200 transition hover:shadow-lg hover:ring-batid-bleu/30">
                         <h3 class="text-xl font-bold text-batid-marine">{{ $trans?->name ?? 'N/A' }}</h3>
                         <p class="mt-2 text-sm text-gray-500">{{ $trans?->description ?? '' }}</p>
 
