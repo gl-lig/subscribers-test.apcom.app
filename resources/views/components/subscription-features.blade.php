@@ -22,6 +22,13 @@
     </li>
     @endif
 
+    @if($type->veille_robotisee || $type->veille_unlimited)
+    <li class="flex items-center gap-3 {{ $s }}">
+        <i class="fa-solid fa-robot {{ $ico }} w-5 text-center {{ $icoColor }}"></i>
+        <span>{{ __('Veille robotisée') }} <strong class="text-batid-marine">{{ $type->veille_unlimited ? '∞' : $type->veille_count }}</strong> <span class="text-gray-400">{{ __('parcelles') }}</span></span>
+    </li>
+    @endif
+
     @if($type->stockage_unlimited || ($type->stockage_go && $type->stockage_go > 0))
     <li class="flex items-center gap-3 {{ $s }}">
         <i class="fa-regular fa-hard-drive {{ $ico }} w-5 text-center {{ $icoColor }}"></i>
@@ -42,13 +49,6 @@
             <svg style="width:27px;height:27px;" class="flex-shrink-0" viewBox="0 0 43.35 40.4"><title>Dropbox</title><path d="M12.87 0L0 8.1l8.8 7.06 12.87-8.4zM0 22.22l12.87 8.1 8.8-7.06-12.87-8.4zM21.67 23.26l8.8 7.06 12.88-8.1-8.81-7.06zM43.35 8.1L30.47 0l-8.8 7.06 12.87 8.1zM21.72 25.16l-8.85 6.98-4.02-2.63v2.95l12.87 7.73 12.87-7.73v-2.95l-4.02 2.63z" fill="#0061FF"/></svg>
             <svg style="width:27px;height:27px;" class="flex-shrink-0" viewBox="0 0 36 36"><title>Proton Drive</title><rect width="36" height="36" rx="8" fill="#6D4AFF"/><path d="M9 10h14.5L18 18l5.5 8H9l5.5-8z" fill="white"/></svg>
         </div>
-    </li>
-    @endif
-
-    @if($type->veille_robotisee || $type->veille_unlimited)
-    <li class="flex items-center gap-3 {{ $s }}">
-        <i class="fa-solid fa-robot {{ $ico }} w-5 text-center {{ $icoColor }}"></i>
-        <span>{{ __('Veille robotisée') }} <strong class="text-batid-marine">{{ $type->veille_unlimited ? '∞' : $type->veille_count }}</strong> <span class="text-gray-400">{{ __('parcelles') }}</span></span>
     </li>
     @endif
 
