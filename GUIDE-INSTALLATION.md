@@ -6,14 +6,14 @@ Envoyez ce message à votre hébergeur Kreativ Medias pour qu'ils mettent l'appl
 
 ---
 
-**Objet : Mise en service subscribers-test.bat-i.ch**
+**Objet : Mise en service subscribers-test.apcom.app**
 
 Bonjour,
 
 Merci de bien vouloir mettre en service l'application Laravel qui se trouve sur le dépôt Git suivant :
 
-**Dépôt Git :** https://github.com/gl-lig/subscribers-test.bat-i.ch.git  
-**Domaine :** subscribers-test.bat-i.ch  
+**Dépôt Git :** https://github.com/gl-lig/subscribers-test.apcom.app.git  
+**Domaine :** subscribers-test.apcom.app  
 **Utilisateur Plesk :** apcom_bat_i
 
 **Base de données (déjà créée) :**
@@ -57,11 +57,11 @@ Merci beaucoup !
 ## Une fois le site en ligne
 
 ### Accéder au site public
-Ouvrez dans votre navigateur : **https://subscribers-test.bat-i.ch**  
+Ouvrez dans votre navigateur : **https://subscribers-test.apcom.app**  
 Vous verrez la page d'abonnements avec 3 offres (Starter, Premium, Enterprise).
 
 ### Accéder à l'administration
-1. Ouvrez : **https://subscribers-test.bat-i.ch/admin/login**
+1. Ouvrez : **https://subscribers-test.apcom.app/admin/login**
 2. Connectez-vous :
    - Email : **gregory.liand@apcom.ch**
    - Mot de passe : **1996**

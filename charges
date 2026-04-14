@@ -3,9 +3,9 @@
 > **Application web** : Gestionnaire d'abonnements en ligne avec paiement intégré  
 > **Framework** : Laravel 11+ (PHP 8.2+)  
 > **Production** : subscribers.bat-i.ch  
-> **Test** : subscribers-test.bat-i.ch  
+> **Test** : subscribers-test.apcom.app  
 > **Hébergeur** : Kreativ Medias — Panel Plesk  
-> **Dépôt Git** : https://github.com/gl-lig/subscribers-test.bat-i.ch.git  
+> **Dépôt Git** : https://github.com/gl-lig/subscribers-test.apcom.app.git  
 
 ---
 
@@ -34,11 +34,11 @@
 | Nature du projet | Application web — Gestionnaire d'abonnements |
 | Framework backend | Laravel 11+ (PHP 8.2+) |
 | Environnement production | subscribers.bat-i.ch |
-| Environnement test | subscribers-test.bat-i.ch |
+| Environnement test | subscribers-test.apcom.app |
 | Hébergeur | Kreativ Medias — Panel Plesk |
 | Base de données | MySQL / MariaDB |
 | Paiement | Datatrans |
-| Dépôt Git | https://github.com/gl-lig/subscribers-test.bat-i.ch.git |
+| Dépôt Git | https://github.com/gl-lig/subscribers-test.apcom.app.git |
 | IP serveur | 94.126.17.132 |
 | Utilisateur système Plesk | apcom_bat_i |
 
@@ -521,7 +521,7 @@ Tous les fichiers SVG sont dans `/public/assets/brand/`
 
 ### 7.1 Mock webservice bat-id.ch
 
-Sur `subscribers-test.bat-i.ch`, le webservice bat-id.ch est simulé localement via un service Laravel mock.
+Sur `subscribers-test.apcom.app`, le webservice bat-id.ch est simulé localement via un service Laravel mock.
 
 | Paramètre | Valeur |
 |---|---|
@@ -542,7 +542,7 @@ Bascule via `.env` sans modification de code.
 APP_NAME="bat-id Subscribers"
 APP_ENV=testing
 APP_DEBUG=true
-APP_URL=https://subscribers-test.bat-i.ch
+APP_URL=https://subscribers-test.apcom.app
 
 DB_CONNECTION=mysql
 DB_HOST=localhost
@@ -812,7 +812,7 @@ DB_PORT=3306
 ### 12.3 Déploiement
 
 - Git → GitHub → Plesk (deploy via Plesk Git)
-- Document root : `/subscribers-test.bat-i.ch/httpdocs/public`
+- Document root : `/subscribers-test.apcom.app/httpdocs/public`
 - Cron Laravel : `* * * * * php /path/artisan schedule:run`
 
 ### 12.4 Rétention logs & Backups
