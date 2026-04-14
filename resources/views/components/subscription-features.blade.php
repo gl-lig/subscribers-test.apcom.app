@@ -18,14 +18,14 @@
     @if($type->alertes_count && $type->alertes_count > 0)
     <li class="flex items-center gap-3 {{ $s }}">
         <i class="fa-regular fa-bell {{ $ico }} w-5 text-center {{ $icoColor }}"></i>
-        <span>{{ __('Alertes') }} <strong class="text-batid-marine">{{ $type->alertes_count }}</strong></span>
+        <span>{{ __('Alertes') }} <strong class="text-batid-marine">{{ $type->alertes_count }}</strong> <span class="text-gray-400">{{ __('parcelles') }}</span></span>
     </li>
     @endif
 
     @if($type->veille_robotisee || $type->veille_unlimited)
     <li class="flex items-center gap-3 {{ $s }}">
         <i class="fa-solid fa-robot {{ $ico }} w-5 text-center {{ $icoColor }}"></i>
-        <span>{{ __('Veille robotisée') }} <strong class="text-batid-marine">{{ $type->veille_unlimited ? '∞' : $type->veille_count }}</strong> <span class="text-gray-400">{{ __('parcelles') }}</span></span>
+        <span>{{ __('Veille robotisée') }}</span>
     </li>
     @endif
 
