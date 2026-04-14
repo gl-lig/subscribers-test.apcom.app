@@ -52,6 +52,8 @@ class AdminSubscriptionTypeController extends Controller
             'cloud_externe' => $request->boolean('cloud_externe'),
             'lot_sauvegarde' => $request->boolean('lot_sauvegarde'),
             'veille_robotisee' => $request->boolean('veille_robotisee'),
+            'veille_count' => $request->input('veille_count'),
+            'veille_unlimited' => $request->boolean('veille_unlimited'),
             'workspace_enabled' => $request->boolean('workspace_enabled'),
             'workspace_unlimited' => $request->boolean('workspace_unlimited'),
         ]));
@@ -93,6 +95,8 @@ class AdminSubscriptionTypeController extends Controller
             'cloud_externe' => $request->boolean('cloud_externe'),
             'lot_sauvegarde' => $request->boolean('lot_sauvegarde'),
             'veille_robotisee' => $request->boolean('veille_robotisee'),
+            'veille_count' => $request->input('veille_count'),
+            'veille_unlimited' => $request->boolean('veille_unlimited'),
             'workspace_enabled' => $request->boolean('workspace_enabled'),
             'workspace_count' => $request->input('workspace_count'),
             'workspace_unlimited' => $request->boolean('workspace_unlimited'),

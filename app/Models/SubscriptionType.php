@@ -13,7 +13,7 @@ class SubscriptionType extends Model
     protected $fillable = [
         'status', 'sort_order', 'parcelles_count', 'parcelles_unlimited',
         'alertes_count', 'stockage_go', 'stockage_unlimited', 'cloud_externe',
-        'lot_sauvegarde', 'veille_robotisee', 'workspace_enabled', 'workspace_count', 'workspace_unlimited',
+        'lot_sauvegarde', 'veille_robotisee', 'veille_count', 'veille_unlimited', 'workspace_enabled', 'workspace_count', 'workspace_unlimited',
         'price_chf', 'is_free', 'discount_24_months', 'discount_36_months',
     ];
 
@@ -25,6 +25,7 @@ class SubscriptionType extends Model
             'cloud_externe' => 'boolean',
             'lot_sauvegarde' => 'boolean',
             'veille_robotisee' => 'boolean',
+            'veille_unlimited' => 'boolean',
             'workspace_enabled' => 'boolean',
             'workspace_unlimited' => 'boolean',
             'price_chf' => 'decimal:2',

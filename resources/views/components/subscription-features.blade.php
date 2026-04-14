@@ -11,7 +11,7 @@
     @if($type->parcelles_unlimited || ($type->parcelles_count && $type->parcelles_count > 0))
     <li class="flex items-center gap-3 {{ $s }}">
         <i class="fa-regular fa-map {{ $ico }} w-5 text-center {{ $icoColor }}"></i>
-        <span>{{ __('Parcelles') }} <strong class="text-batid-marine">{{ $type->parcelles_unlimited ? __('Illimité') : $type->parcelles_count }}</strong></span>
+        <span>{{ __('Parcelles') }} <strong class="text-batid-marine">{{ $type->parcelles_unlimited ? '∞' : $type->parcelles_count }}</strong></span>
     </li>
     @endif
 
@@ -25,7 +25,7 @@
     @if($type->stockage_unlimited || ($type->stockage_go && $type->stockage_go > 0))
     <li class="flex items-center gap-3 {{ $s }}">
         <i class="fa-regular fa-hard-drive {{ $ico }} w-5 text-center {{ $icoColor }}"></i>
-        <span>{{ __('Stockage') }} <strong class="text-batid-marine">{{ $type->stockage_unlimited ? __('Illimité') : $type->stockage_go . ' Go' }}</strong></span>
+        <span>{{ __('Stockage') }} <strong class="text-batid-marine">{{ $type->stockage_unlimited ? '∞' : $type->stockage_go . ' Go' }}</strong></span>
     </li>
     @endif
 
@@ -45,10 +45,10 @@
     </li>
     @endif
 
-    @if($type->veille_robotisee)
+    @if($type->veille_robotisee || $type->veille_unlimited)
     <li class="flex items-center gap-3 {{ $s }}">
         <i class="fa-solid fa-robot {{ $ico }} w-5 text-center {{ $icoColor }}"></i>
-        <span>{{ __('Veille robotisée') }}</span>
+        <span>{{ __('Veille robotisée') }} <strong class="text-batid-marine">{{ $type->veille_unlimited ? '∞' : $type->veille_count }}</strong> <span class="text-gray-400">{{ __('parcelles') }}</span></span>
     </li>
     @endif
 
@@ -62,7 +62,7 @@
     @if($type->workspace_enabled || $type->workspace_unlimited)
     <li class="flex items-center gap-3 {{ $s }}">
         <i class="fa-solid fa-people-group {{ $ico }} w-5 text-center {{ $icoColor }}"></i>
-        <span>{{ __('Workspace') }} <strong class="text-batid-marine">{{ $type->workspace_unlimited ? __('Illimité') : $type->workspace_count }}</strong></span>
+        <span>{{ __('Workspace') }} <strong class="text-batid-marine">{{ $type->workspace_unlimited ? '∞' : $type->workspace_count }}</strong> <span class="text-gray-400">{{ __('sièges') }}</span></span>
     </li>
     @endif
 </ul>

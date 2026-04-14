@@ -56,15 +56,20 @@
                 <label class="mt-2 flex items-center gap-2 text-sm"><input type="checkbox" name="stockage_unlimited" value="1" {{ old('stockage_unlimited', $type?->stockage_unlimited) ? 'checked' : '' }} class="rounded border-gray-300 text-batid-bleu"> Illimité</label>
             </div>
             <div>
-                <label class="mb-1 block text-sm font-medium text-gray-700">Workspace</label>
-                <input type="number" name="workspace_count" value="{{ old('workspace_count', $type?->workspace_count) }}" placeholder="Laisser vide = illimité" class="w-full rounded-lg border-gray-300 text-sm">
+                <label class="mb-1 block text-sm font-medium text-gray-700">Workspace (sièges)</label>
+                <input type="number" name="workspace_count" value="{{ old('workspace_count', $type?->workspace_count) }}" placeholder="Nombre de sièges" class="w-full rounded-lg border-gray-300 text-sm">
                 <label class="mt-2 flex items-center gap-2 text-sm"><input type="checkbox" name="workspace_enabled" value="1" {{ old('workspace_enabled', $type?->workspace_enabled) ? 'checked' : '' }} class="rounded border-gray-300 text-batid-bleu"> Activé</label>
                 <label class="mt-1 flex items-center gap-2 text-sm"><input type="checkbox" name="workspace_unlimited" value="1" {{ old('workspace_unlimited', $type?->workspace_unlimited) ? 'checked' : '' }} class="rounded border-gray-300 text-batid-bleu"> Illimité</label>
+            </div>
+            <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Veille robotisée (parcelles sous surveillance)</label>
+                <input type="number" name="veille_count" value="{{ old('veille_count', $type?->veille_count) }}" placeholder="Nombre de parcelles" class="w-full rounded-lg border-gray-300 text-sm">
+                <label class="mt-2 flex items-center gap-2 text-sm"><input type="checkbox" name="veille_robotisee" value="1" {{ old('veille_robotisee', $type?->veille_robotisee) ? 'checked' : '' }} class="rounded border-gray-300 text-batid-bleu"> Activé</label>
+                <label class="mt-1 flex items-center gap-2 text-sm"><input type="checkbox" name="veille_unlimited" value="1" {{ old('veille_unlimited', $type?->veille_unlimited) ? 'checked' : '' }} class="rounded border-gray-300 text-batid-bleu"> Illimité</label>
             </div>
             <div class="space-y-2">
                 <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="cloud_externe" value="1" {{ old('cloud_externe', $type?->cloud_externe) ? 'checked' : '' }} class="rounded border-gray-300 text-batid-bleu"> Cloud externe</label>
                 <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="lot_sauvegarde" value="1" {{ old('lot_sauvegarde', $type?->lot_sauvegarde) ? 'checked' : '' }} class="rounded border-gray-300 text-batid-bleu"> Lot de sauvegarde</label>
-                <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="veille_robotisee" value="1" {{ old('veille_robotisee', $type?->veille_robotisee) ? 'checked' : '' }} class="rounded border-gray-300 text-batid-bleu"> Veille robotisée</label>
             </div>
         </div>
     </div>
