@@ -26,7 +26,12 @@
                 <div class="flex justify-between"><dt class="text-gray-500">{{ __('Moyen de paiement') }}</dt><dd>{{ ucfirst($order->payment_method ?? '-') }}</dd></div>
             </dl>
 
-            <div class="mt-6 rounded-lg bg-blue-50 p-4 text-center text-sm text-blue-700">
+            <div class="mt-6 rounded-lg bg-gray-50 p-4">
+                <h3 class="mb-3 text-sm font-semibold text-batid-marine">{{ __('Caractéristiques incluses') }}</h3>
+                <x-subscription-features :type="$order->subscriptionType" :compact="true" />
+            </div>
+
+            <div class="mt-4 rounded-lg bg-blue-50 p-4 text-center text-sm text-blue-700">
                 {{ __('Votre facture a été transmise à bat-id.ch') }}
             </div>
 

@@ -39,6 +39,10 @@
             <div><span class="text-gray-500">{{ __('Date de début') }}</span><p class="font-medium">{{ now()->format('d.m.Y') }}</p></div>
             <div><span class="text-gray-500">{{ __('Date de fin') }}</span><p class="font-medium">{{ now()->addMonths($duration)->format('d.m.Y') }}</p></div>
         </div>
+
+        <div class="mt-5 border-t pt-5">
+            <x-subscription-features :type="$type" :compact="true" />
+        </div>
     </div>
 
     <!-- Price breakdown -->
