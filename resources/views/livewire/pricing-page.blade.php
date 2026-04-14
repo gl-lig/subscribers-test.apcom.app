@@ -8,14 +8,14 @@
     </section>
 
     <!-- Duration selector -->
-    <div class="mx-auto -mt-6 max-w-md px-4">
-        <div class="flex rounded-xl bg-white p-1.5 shadow-lg ring-1 ring-gray-200">
+    <div class="mx-auto -mt-6 max-w-lg px-4">
+        <div class="flex gap-2 rounded-2xl bg-white p-2 shadow-lg ring-1 ring-gray-200">
             @foreach([12, 24, 36] as $d)
             <button wire:click="selectDuration({{ $d }})"
-                    class="relative flex-1 rounded-lg py-2.5 text-sm font-semibold transition {{ $selectedDuration === $d ? 'bg-batid-marine text-white shadow' : 'text-gray-600 hover:text-batid-marine' }}">
-                {{ __("$d mois") }}
+                    class="relative flex-1 rounded-xl py-3 text-sm font-semibold transition {{ $selectedDuration === $d ? 'bg-batid-marine text-white shadow-md' : 'text-gray-500 hover:bg-gray-50 hover:text-batid-marine' }}">
+                {{ $d }} {{ __('mois') }}
                 @if(($maxDiscounts[$d] ?? 0) > 0)
-                <span class="absolute -right-1 -top-2.5 rounded-full bg-batid-vert px-1.5 py-0.5 text-[10px] font-bold leading-none text-batid-marine">-{{ $maxDiscounts[$d] }}%</span>
+                <span class="absolute -top-2 {{ $d === 36 ? '-right-1' : '-right-2' }} rounded-md bg-batid-vert px-1.5 py-0.5 text-[10px] font-bold leading-none text-batid-marine shadow-sm">-{{ $maxDiscounts[$d] }}%</span>
                 @endif
             </button>
             @endforeach
