@@ -1,6 +1,12 @@
 @extends('layouts.admin')
 @section('content')
-<h1 class="mb-6 text-2xl font-bold text-batid-marine">Journal API</h1>
+<div class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-batid-marine">Journal API</h1>
+    <a href="{{ route('admin.api.documentation') }}" class="inline-flex items-center gap-2 rounded-lg bg-batid-bleu px-4 py-2 text-sm text-white hover:bg-batid-marine">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Documentation Deeplink
+    </a>
+</div>
 <div class="mb-4 flex gap-3">
     <form method="GET" class="flex gap-3">
         <select name="event" class="rounded-lg border-gray-300 text-sm">

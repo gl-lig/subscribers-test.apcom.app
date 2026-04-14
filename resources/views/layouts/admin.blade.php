@@ -62,14 +62,15 @@
                         <a href="{{ route('admin.settings.index') }}" class="block rounded px-3 py-1.5 text-sm text-white/60 hover:text-white">Paramètres</a>
                     </div>
                 </div>
-                <div x-data="{ open: {{ request()->routeIs('admin.logs.*') ? 'true' : 'false' }} }">
+                <div x-data="{ open: {{ request()->routeIs('admin.logs.*', 'admin.api.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open" class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-white/80 transition hover:bg-white/10">
-                        <span class="flex items-center gap-3"><span>📋</span> Logs</span>
+                        <span class="flex items-center gap-3"><span>📋</span> Logs & API</span>
                         <svg class="h-4 w-4 transition" :class="open && 'rotate-90'" fill="currentColor" viewBox="0 0 20 20"><path d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"/></svg>
                     </button>
                     <div x-show="open" class="ml-6 space-y-1">
                         <a href="{{ route('admin.logs.activity') }}" class="block rounded px-3 py-1.5 text-sm text-white/60 hover:text-white">Activité admin</a>
-                        <a href="{{ route('admin.logs.api') }}" class="block rounded px-3 py-1.5 text-sm text-white/60 hover:text-white">API</a>
+                        <a href="{{ route('admin.logs.api') }}" class="block rounded px-3 py-1.5 text-sm text-white/60 hover:text-white">Journal API</a>
+                        <a href="{{ route('admin.api.documentation') }}" class="block rounded px-3 py-1.5 text-sm {{ request()->routeIs('admin.api.documentation') ? 'text-batid-vert' : 'text-white/60' }} hover:text-white">Documentation API</a>
                     </div>
                 </div>
             </nav>

@@ -76,6 +76,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/logs/api', [AdminLogController::class, 'api'])->name('logs.api');
         Route::post('/logs/api/{apiLog}/replay', [AdminLogController::class, 'replay'])->name('logs.api.replay');
 
+        // API Documentation
+        Route::get('/api/documentation', [AdminLogController::class, 'documentation'])->name('api.documentation');
+        Route::get('/api/test-token', [AdminLogController::class, 'generateTestToken'])->name('api.test-token');
+
         // Exports
         Route::get('/export/{type}', [AdminExportController::class, 'export'])->name('export');
     });
