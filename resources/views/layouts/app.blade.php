@@ -15,7 +15,7 @@
 </head>
 <body class="min-h-screen bg-white font-sans text-batid-marine antialiased">
     <!-- Header -->
-    <header style="background: linear-gradient(to top right, #3DFF9E 0%, #38F3A4 6%, #2DD3B6 17%, #1B9FD2 32%, #0050FF 52%, #00004D 84%);">
+    <header class="bg-batid-marine">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center">
@@ -34,34 +34,28 @@
     </main>
 
     <!-- Footer -->
-    <footer class="mt-20 bg-batid-marine pb-10 pt-12">
-        <div class="mx-auto max-w-3xl px-6 text-center">
+    <footer class="mt-20 border-t border-gray-100 bg-white py-10">
+        <div class="mx-auto max-w-2xl px-6">
 
-            {{-- Bouclier suisse + texte --}}
-            <div class="flex items-center justify-center gap-4">
-                <svg style="width:40px;height:40px;flex-shrink:0;" viewBox="0 0 32 32" fill="none">
+            {{-- Suisse --}}
+            <div class="flex items-center justify-center gap-3">
+                <svg style="width:28px;height:28px;flex-shrink:0;" viewBox="0 0 32 32" fill="none">
                     <path d="M16 1L3 6v9c0 8.5 5.5 16.4 13 18 7.5-1.6 13-9.5 13-18V6L16 1z" fill="#D52B1E"/>
                     <rect x="13.5" y="8" width="5" height="16" rx="1" fill="white"/>
                     <rect x="8" y="13.5" width="16" height="5" rx="1" fill="white"/>
                 </svg>
-                <p class="text-left text-sm leading-snug text-white/70">{{ __('Développement, serveurs et stockage de données entièrement sécurisés en Suisse') }} <span class="font-semibold text-white">(100% CH)</span></p>
+                <p class="text-xs leading-snug text-gray-500">{{ __('Développement, serveurs et stockage de données entièrement sécurisés en Suisse') }} <strong class="text-gray-700">(100% CH)</strong></p>
             </div>
 
-            {{-- Séparateur --}}
-            <div class="mx-auto my-8 h-px w-24 bg-white/15"></div>
-
-            {{-- Logo --}}
-            <img src="{{ asset('assets/brand/BATID_Monogramme_blanc.svg') }}" alt="bat-id" class="mx-auto mb-5 h-8 opacity-30">
-
-            {{-- Liens --}}
-            <div class="mb-4 flex items-center justify-center gap-5 text-xs">
-                <a href="https://bat-id.ch/terms" target="_blank" class="text-white/50 transition hover:text-white">{{ __('Conditions générales') }}</a>
-                <span class="text-white/20">|</span>
-                <a href="https://bat-id.ch/privacy" target="_blank" class="text-white/50 transition hover:text-white">{{ __('Protection des données') }}</a>
+            {{-- Liens + copyright --}}
+            <div class="mt-6 flex flex-col items-center gap-3">
+                <div class="flex items-center gap-4 text-xs text-gray-400">
+                    <a href="https://bat-id.ch/terms" target="_blank" class="transition hover:text-batid-bleu">{{ __('Conditions générales') }}</a>
+                    <span>·</span>
+                    <a href="https://bat-id.ch/privacy" target="_blank" class="transition hover:text-batid-bleu">{{ __('Protection des données') }}</a>
+                </div>
+                <p class="text-[11px] text-gray-300">&copy; {{ date('Y') }} bat-id.ch</p>
             </div>
-
-            {{-- Copyright --}}
-            <p class="text-xs text-white/30">&copy; {{ date('Y') }} bat-id.ch &mdash; {{ __('Tous droits réservés') }}</p>
 
         </div>
     </footer>

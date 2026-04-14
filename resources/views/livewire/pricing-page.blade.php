@@ -1,6 +1,6 @@
 <div>
     <!-- Hero -->
-    <section class="py-16 text-center text-white" style="background: linear-gradient(to top right, #3DFF9E 0%, #38F3A4 6%, #2DD3B6 17%, #1B9FD2 32%, #0050FF 52%, #00004D 84%);">
+    <section class="py-16 text-center text-white" style="background: linear-gradient(to bottom, #00004D 0%, #0050FF 40%, #1B9FD2 65%, #2DD3B6 85%, #3DFF9E 100%);">
         <div class="mx-auto max-w-4xl px-4">
             <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">{{ __('Nos abonnements') }}</h1>
             <p class="mt-4 text-lg text-white/60">{{ __("Choisissez l'abonnement qui correspond à vos besoins") }}</p>
