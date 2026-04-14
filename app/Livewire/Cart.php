@@ -149,7 +149,7 @@ class Cart extends Component
 
         if ($subscriber) {
             $currentOrder = $subscriber->activeOrder();
-            if ($currentOrder) {
+            if ($currentOrder && $currentOrder->subscriptionType) {
                 $this->isUpgrade = true;
                 $this->currentOrderData = [
                     'type_name' => $currentOrder->subscriptionType->translation(app()->getLocale())?->name ?? '',
