@@ -121,20 +121,20 @@ body, button, input, select, textarea {
 }
 
 .fe-title {
-  font-size: clamp(22px, 3.5vw, 34px);
-  font-weight: 600;
+  font-size: clamp(28px, 4.5vw, 42px);
+  font-weight: 800;
   color: #0051FF;
-  line-height: 1.25;
-  margin-bottom: 14px;
+  line-height: 1.2;
+  margin-bottom: 18px;
 }
 
 .fe-subtitle {
-  font-size: 15px;
-  font-weight: 400;
-  color: rgba(0,81,255,0.65);
-  max-width: 480px;
+  font-size: 17px;
+  font-weight: 500;
+  color: rgba(0,81,255,0.70);
+  max-width: 520px;
   margin: 0 auto;
-  line-height: 1.75;
+  line-height: 1.7;
 }
 
 /* Pills nav */
@@ -275,11 +275,3 @@ body, button, input, select, textarea {
 .fe-ico-check { color: #3DFF9E; }
 .fe-ico-dash  { color: rgba(255,255,255,0.20); }
 
-/* Badge Suisse */
-.fe-badge {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  margin-top: 60px;
-  font-size: 12px; font-weight: 400;
-  color: rgba(0,81,255,0.50); letter-spacing: 0.04em;
-}
-.fe-badge svg { width: 13px; height: 13px; color: #0051FF; opacity: 0.45; }
