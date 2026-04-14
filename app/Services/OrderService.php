@@ -88,10 +88,8 @@ class OrderService implements OrderServiceInterface
         $discountDurationPct = 0;
         $discountPromoPct = 0;
 
-        // Rabais 36 mois
-        if ($durationMonths === 36 && $type->discount_36_months > 0) {
-            $discountDurationPct = (float) $type->discount_36_months;
-        }
+        // Rabais durée (24 ou 36 mois)
+        $discountDurationPct = $type->discountForDuration($durationMonths);
 
         $afterDurationDiscount = $priceCatalogue - ($priceCatalogue * $discountDurationPct / 100);
 

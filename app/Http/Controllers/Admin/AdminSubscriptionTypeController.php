@@ -36,6 +36,7 @@ class AdminSubscriptionTypeController extends Controller
             'workspace_count' => 'nullable|integer|min:0',
             'workspace_unlimited' => 'boolean',
             'price_chf' => 'required|numeric|min:0',
+            'discount_24_months' => 'nullable|numeric|min:0|max:100',
             'discount_36_months' => 'nullable|numeric|min:0|max:100',
             'translations' => 'required|array',
             'translations.fr.name' => 'required|string|max:255',
@@ -91,6 +92,7 @@ class AdminSubscriptionTypeController extends Controller
             'workspace_count' => $request->input('workspace_count'),
             'workspace_unlimited' => $request->boolean('workspace_unlimited'),
             'price_chf' => $request->input('price_chf'),
+            'discount_24_months' => $request->input('discount_24_months', 0),
             'discount_36_months' => $request->input('discount_36_months', 0),
         ]);
 

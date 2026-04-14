@@ -14,7 +14,7 @@ class SubscriptionType extends Model
         'status', 'sort_order', 'parcelles_count', 'parcelles_unlimited',
         'alertes_count', 'stockage_go', 'stockage_unlimited', 'cloud_externe',
         'lot_sauvegarde', 'workspace_enabled', 'workspace_count', 'workspace_unlimited',
-        'price_chf', 'discount_36_months',
+        'price_chf', 'discount_24_months', 'discount_36_months',
     ];
 
     protected function casts(): array
@@ -27,6 +27,7 @@ class SubscriptionType extends Model
             'workspace_enabled' => 'boolean',
             'workspace_unlimited' => 'boolean',
             'price_chf' => 'decimal:2',
+            'discount_24_months' => 'decimal:2',
             'discount_36_months' => 'decimal:2',
         ];
     }
@@ -57,13 +58,25 @@ class SubscriptionType extends Model
         return $query->orderBy('sort_order');
     }
 
+    public function discountForDuration(int $months): float
+    {
+        if ($months === 36 && $this->discount_36_months > 0) {
+            return (float) $this->discount_36_months;
+        }
+        if ($months === 24 && $this->discount_24_months > 0) {
+            return (float) $this->discount_24_months;
+        }
+        return 0;
+    }
+
     public function priceForDuration(int $months): float
     {
         $annual = (float) $this->price_chf;
         $total = $annual * ($months / 12);
 
-        if ($months === 36 && $this->discount_36_months > 0) {
-            $total -= $total * ($this->discount_36_months / 100);
+        $discount = $this->discountForDuration($months);
+        if ($discount > 0) {
+            $total -= $total * ($discount / 100);
         }
 
         return round($total, 2);

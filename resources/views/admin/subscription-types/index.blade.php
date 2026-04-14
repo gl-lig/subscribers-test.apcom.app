@@ -14,8 +14,11 @@
             <div>
                 <h3 class="font-semibold text-batid-marine">{{ $type->translation('fr')?->name ?? 'Sans nom' }}</h3>
                 <p class="text-sm text-gray-500">CHF {{ $type->price_chf }}/an
+                    @if($type->discount_24_months > 0)
+                        <span class="ml-2 text-green-600">-{{ $type->discount_24_months }}% sur 24m</span>
+                    @endif
                     @if($type->discount_36_months > 0)
-                        <span class="ml-2 text-green-600">-{{ $type->discount_36_months }}% sur 36 mois</span>
+                        <span class="ml-2 text-green-600">-{{ $type->discount_36_months }}% sur 36m</span>
                     @endif
                 </p>
             </div>

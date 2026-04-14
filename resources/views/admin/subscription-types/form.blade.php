@@ -13,7 +13,7 @@
 
     <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
         <h3 class="mb-4 font-semibold text-batid-marine">Paramètres</h3>
-        <div class="grid gap-4 sm:grid-cols-3">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div>
                 <label class="mb-1 block text-sm font-medium text-gray-700">Statut</label>
                 <select name="status" class="w-full rounded-lg border-gray-300 text-sm">
@@ -25,6 +25,10 @@
             <div>
                 <label class="mb-1 block text-sm font-medium text-gray-700">Prix CHF / an</label>
                 <input type="number" step="0.01" name="price_chf" value="{{ old('price_chf', $type?->price_chf) }}" required class="w-full rounded-lg border-gray-300 text-sm">
+            </div>
+            <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Rabais 24 mois (%)</label>
+                <input type="number" step="0.01" name="discount_24_months" value="{{ old('discount_24_months', $type?->discount_24_months ?? 0) }}" class="w-full rounded-lg border-gray-300 text-sm">
             </div>
             <div>
                 <label class="mb-1 block text-sm font-medium text-gray-700">Rabais 36 mois (%)</label>
