@@ -12,20 +12,56 @@
         <button wire:click="$set('notFound', false)" class="mt-3 block w-full text-sm text-gray-500 hover:text-batid-bleu">{{ __('Réessayer') }}</button>
     </div>
     @else
-    <div x-data="phoneInput">
+    <div x-data="{
+        iti: null,
+        fullNumber: '',
+        init() {
+            this.$nextTick(() => {
+                const input = this.$refs.phoneField;
+                if (!input || !window.intlTelInput) return;
+                this.iti = window.intlTelInput(input, {
+                    initialCountry: 'ch',
+                    preferredCountries: ['ch', 'fr', 'de', 'it', 'at'],
+                    separateDialCode: true,
+                    nationalMode: true,
+                    formatOnDisplay: true,
+                    countrySearch: true,
+                    showFlags: true,
+                    useFullscreenPopup: false,
+                    loadUtilsOnInit: false,
+                });
+            });
+        },
+        getFullNumber() {
+            if (this.iti && window.intlTelInputUtils) {
+                return this.iti.getNumber(intlTelInputUtils.numberFormat.E164);
+            }
+            if (this.iti) {
+                const dialCode = this.iti.getSelectedCountryData().dialCode;
+                const national = this.$refs.phoneField.value.replace(/\s/g, '');
+                return '+' + dialCode + national.replace(/^0+/, '');
+            }
+            return this.$refs.phoneField.value;
+        },
+        submit() {
+            const number = this.getFullNumber();
+            $wire.set('phone', number);
+            $wire.verifyPhone();
+        }
+    }">
         <p class="mb-4 text-sm text-gray-500">{{ __('Entrez votre numéro de téléphone mobile') }}</p>
-        <div class="mb-4">
+        <div class="mb-4" wire:ignore>
             <input type="tel" x-ref="phoneField" inputmode="tel"
                    placeholder="79 123 45 67"
-                   class="iti-phone-input w-full rounded-xl border-gray-300 px-4 py-3.5 text-lg tracking-wider focus:border-batid-bleu focus:ring-batid-bleu"
-                   @keydown.enter="submitPhone()">
+                   class="w-full rounded-xl border-gray-300 px-4 py-3.5 text-lg tracking-wider focus:border-batid-bleu focus:ring-batid-bleu"
+                   @keydown.enter.prevent="submit()">
         </div>
 
         @if($error)
         <p class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">{{ $error }}</p>
         @endif
 
-        <button @click="submitPhone()" wire:loading.attr="disabled"
+        <button @click="submit()" wire:loading.attr="disabled" wire:target="verifyPhone"
                 class="w-full rounded-xl bg-batid-marine py-3.5 text-sm font-bold text-batid-vert transition hover:bg-batid-bleu hover:text-white disabled:opacity-50">
             <span wire:loading.remove wire:target="verifyPhone">{{ __('Vérifier') }}</span>
             <span wire:loading wire:target="verifyPhone" class="flex items-center justify-center gap-2">

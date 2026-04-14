@@ -39,15 +39,24 @@
 /* intl-tel-input overrides */
 .iti {
     width: 100%;
+    display: block;
 }
 .iti__country-list {
     z-index: 100;
-    max-height: 250px;
+    max-height: 220px;
+    overflow-y: auto;
 }
 .iti__selected-dial-code {
     font-size: 1.125rem;
     color: #00004D;
+    font-weight: 500;
 }
 .iti__flag-container {
     padding-left: 0.5rem;
+}
+.iti--separate-dial-code .iti__selected-flag {
+    background-color: transparent;
+}
+.iti input {
+    padding-left: 90px !important;
 }
