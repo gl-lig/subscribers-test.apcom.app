@@ -1,0 +1,950 @@
+# CAHIER DES CHARGES — bat-id Subscribers v1.0
+
+> **Application web** : Gestionnaire d'abonnements en ligne avec paiement intégré  
+> **Framework** : Laravel 11+ (PHP 8.2+)  
+> **Production** : subscribers.bat-i.ch  
+> **Test** : subscribers-test.bat-i.ch  
+> **Hébergeur** : Kreativ Medias — Panel Plesk  
+> **Dépôt Git** : https://github.com/gl-lig/subscribers-test.bat-i.ch.git  
+
+---
+
+## TABLE DES MATIÈRES
+
+1. [Informations générales](#1-informations-générales)
+2. [Description fonctionnelle](#2-description-fonctionnelle)
+3. [Modèle de données](#3-modèle-de-données)
+4. [Module de paiement Datatrans](#4-module-de-paiement-datatrans)
+5. [Comportement logiciel & tunnel d'achat](#5-comportement-logiciel--tunnel-dachat)
+6. [Charte graphique](#6-charte-graphique)
+7. [Environnements & stratégie de test](#7-environnements--stratégie-de-test)
+8. [API sortante vers bat-id.ch](#8-api-sortante-vers-bat-idch)
+9. [Expérience utilisateur UX](#9-expérience-utilisateur-ux)
+10. [Standards techniques](#10-standards-techniques)
+11. [Internationalisation](#11-internationalisation)
+12. [Infrastructure & hébergement](#12-infrastructure--hébergement)
+13. [Dashboard administrateur](#13-dashboard-administrateur)
+
+---
+
+## 1. INFORMATIONS GÉNÉRALES
+
+| Champ | Détail |
+|---|---|
+| Nature du projet | Application web — Gestionnaire d'abonnements |
+| Framework backend | Laravel 11+ (PHP 8.2+) |
+| Environnement production | subscribers.bat-i.ch |
+| Environnement test | subscribers-test.bat-i.ch |
+| Hébergeur | Kreativ Medias — Panel Plesk |
+| Base de données | MySQL / MariaDB |
+| Paiement | Datatrans |
+| Dépôt Git | https://github.com/gl-lig/subscribers-test.bat-i.ch.git |
+| IP serveur | 94.126.17.132 |
+| Utilisateur système Plesk | apcom_bat_i |
+
+---
+
+## 2. DESCRIPTION FONCTIONNELLE
+
+### 2.1 Contexte
+
+`subscribers.bat-i.ch` est le gestionnaire d'abonnements de l'application **bat-id.ch** — un logiciel suisse de gestion de biens immobiliers disponible en application mobile (iOS/Android) et desktop.
+
+Le gestionnaire permet aux utilisateurs bat-id existants de souscrire en ligne à un abonnement qui débloque des fonctionnalités dans l'application mobile bat-id.
+
+### 2.2 Principe fondamental — Zéro friction, zéro authentification
+
+L'achat d'un abonnement ne nécessite :
+- ❌ Aucune création de compte
+- ❌ Aucun login / mot de passe
+- ❌ Aucune saisie d'email (non collecté)
+- ✅ Uniquement le numéro de téléphone mobile
+- ✅ Si bat-ID trouvé → accès immédiat au panier
+- ✅ Parcours complet en moins de 2 minutes
+
+### 2.3 Relation entre les systèmes
+
+```
+bat-id.ch (app mobile/desktop)
+        ↕  Webservice (vérification utilisateur)
+subscribers.bat-i.ch (gestionnaire abonnements)
+        ↓  API sortante (notification activation/expiration)
+bat-id.ch (mise à jour profil utilisateur)
+```
+
+**Prérequis** : L'utilisateur doit obligatoirement posséder un compte bat-id actif (avoir installé l'application mobile) avant de pouvoir souscrire.
+
+Le webservice bat-id.ch retourne uniquement :
+- `bat_id` : identifiant unique de l'utilisateur
+- `phone` : numéro de téléphone confirmé
+
+---
+
+## 3. MODÈLE DE DONNÉES
+
+### 3.1 Table `subscribers` — Registre des abonnés
+
+| Champ | Type | Détail |
+|---|---|---|
+| `id` | bigint PK auto-increment | Identifiant technique interne |
+| `bat_id` | varchar(100) unique | Identifiant bat-id retourné par webservice |
+| `phone` | varchar(30) | Numéro mobile format E.164 — retourné par webservice |
+| `created_at` | timestamp | |
+| `updated_at` | timestamp | |
+
+> **Note** : L'email n'est PAS collecté. bat-id.ch ne le retourne pas.
+
+### 3.2 Table `subscription_types` — Types d'abonnement
+
+| Champ | Type | Détail |
+|---|---|---|
+| `id` | bigint PK auto-increment | |
+| `status` | enum | `online` / `admin_only` / `inactive` |
+| `sort_order` | int | Ordre d'affichage (drag & drop admin) |
+| `parcelles_count` | int nullable | Null = illimité |
+| `parcelles_unlimited` | boolean | |
+| `alertes_count` | int | |
+| `stockage_go` | int nullable | Null = illimité |
+| `stockage_unlimited` | boolean | |
+| `cloud_externe` | boolean | |
+| `lot_sauvegarde` | boolean | |
+| `workspace_enabled` | boolean | |
+| `workspace_count` | int nullable | Null = illimité |
+| `workspace_unlimited` | boolean | |
+| `price_chf` | decimal(10,2) | Prix TTC CHF |
+| `discount_36_months` | decimal(5,2) | % rabais si engagement 36 mois |
+| `created_at` | timestamp | |
+| `updated_at` | timestamp | |
+
+> Statut `online` = visible publiquement. `admin_only` = visible uniquement dans le back-office. `inactive` = invisible partout.
+
+**Table de traductions** : `subscription_type_translations`
+
+| Champ | Type | Détail |
+|---|---|---|
+| `id` | bigint PK | |
+| `subscription_type_id` | FK | |
+| `locale` | varchar(5) | fr, de, it, en |
+| `name` | varchar(255) | Nom du type |
+| `description` | text | Description |
+
+### 3.3 Table `orders` — Registre des commandes
+
+| Champ | Type | Détail |
+|---|---|---|
+| `id` | bigint PK auto-increment | |
+| `order_number` | varchar(20) unique | Format CMD-000001 |
+| `subscriber_id` | FK → subscribers | |
+| `subscription_type_id` | FK → subscription_types | |
+| `duration_months` | int | 12, 24 ou 36 |
+| `price_catalogue` | decimal(10,2) | Prix catalogue au moment de la commande |
+| `discount_duration_pct` | decimal(5,2) | % rabais durée appliqué |
+| `promo_code` | varchar(100) nullable | Code promo utilisé |
+| `discount_promo_pct` | decimal(5,2) | % rabais promo appliqué |
+| `price_paid` | decimal(10,2) | Prix final payé CHF TTC |
+| `prorata_deducted` | decimal(10,2) | Montant prorata déduit (upgrade) |
+| `status` | enum | `active` / `expired` / `replaced` |
+| `concluded_at` | timestamp | Date/heure de conclusion |
+| `starts_at` | date | Début de validité |
+| `expires_at` | date | Fin de validité |
+| `datatrans_transaction_id` | varchar(100) | ID transaction Datatrans |
+| `payment_method` | varchar(50) | visa / visa_debit / mastercard / mastercard_debit / twint |
+| `invoice_token` | uuid unique | Token UUID v4 non prédictif |
+| `invoice_url` | varchar(500) | https://subscribers.bat-i.ch/invoice/{token} |
+| `cgv_accepted_at` | timestamp | Horodatage acceptation CGV |
+| `cgv_version` | varchar(50) | Version CGV acceptée |
+| `expiry_notified_at` | timestamp nullable | Horodatage notification J-30 envoyée à bat-id.ch |
+| `replaced_by_order_id` | FK nullable | Si remplacée par upgrade |
+| `replacement_note` | text nullable | "Remboursement pour nouvel engagement de type supérieur" |
+| `created_at` | timestamp | |
+| `updated_at` | timestamp | |
+
+**Table** `order_metadata` — Métadonnées techniques
+
+| Champ | Type | Détail |
+|---|---|---|
+| `id` | bigint PK | |
+| `order_id` | FK → orders | |
+| `ip_address` | varchar(45) | IPv4 ou IPv6 |
+| `user_agent` | text | Navigateur complet |
+| `os` | varchar(100) | OS détecté |
+| `browser` | varchar(100) | Navigateur détecté |
+| `language` | varchar(20) | Langue navigateur |
+| `screen_resolution` | varchar(20) | Ex: 1920x1080 |
+| `timezone` | varchar(50) | |
+| `referer` | text nullable | URL de provenance |
+| `session_id` | varchar(255) | Session Laravel |
+| `server_timestamp` | timestamp | Timestamp serveur |
+
+**Table** `payment_logs` — Logs Datatrans
+
+| Champ | Type | Détail |
+|---|---|---|
+| `id` | bigint PK | |
+| `order_id` | FK → orders | |
+| `datatrans_transaction_id` | varchar(100) | |
+| `event` | varchar(50) | authorized / settled / declined / error |
+| `payload` | json | Corps brut du webhook |
+| `received_at` | timestamp | |
+
+### 3.4 Table `promo_codes` — Codes de promotion
+
+| Champ | Type | Détail |
+|---|---|---|
+| `id` | bigint PK | |
+| `title` | varchar(255) | Titre du code |
+| `description` | text | Description |
+| `code` | varchar(100) unique | Code saisi par l'utilisateur |
+| `discount_pct` | decimal(5,2) | Pourcentage de réduction (uniquement %) |
+| `valid_from` | datetime | Début de validité |
+| `valid_until` | datetime nullable | Fin — null = durée indéterminée |
+| `usage_limit_per_user` | int | Max utilisations par utilisateur |
+| `scope` | enum | `all` / `specific_user` / `group` |
+| `bat_id_specific` | varchar(100) nullable | Si scope = specific_user |
+| `user_group_id` | FK nullable | Si scope = group |
+| `is_active` | boolean | |
+| `created_at` | timestamp | |
+| `updated_at` | timestamp | |
+
+**Ordre d'application des remises** :
+```
+Prix catalogue TTC
+  → - Rabais 36 mois (% sur prix catalogue)
+  = Sous-total après rabais durée
+  → - Code promo % (sur le sous-total)
+  = Prix final TTC
+  → - Prorata abonnement actif (si upgrade)
+  = TOTAL À PAYER
+```
+
+### 3.5 Table `user_groups` — Groupes d'utilisateurs
+
+| Champ | Type | Détail |
+|---|---|---|
+| `id` | bigint PK | |
+| `name` | varchar(255) | Nom du groupe |
+| `description` | text nullable | |
+| `created_at` | timestamp | |
+| `updated_at` | timestamp | |
+
+**Table pivot** `user_group_members` : `group_id` + `bat_id` + `created_at`
+
+> Un abonné peut appartenir à plusieurs groupes.
+
+### 3.6 Table `admins` — Administrateurs
+
+| Champ | Type | Détail |
+|---|---|---|
+| `id` | bigint PK | |
+| `first_name` | varchar(100) | |
+| `last_name` | varchar(100) | |
+| `email` | varchar(255) unique | Identifiant de connexion |
+| `password` | varchar(255) | Bcrypt via Laravel |
+| `role` | enum | `super_admin` / `admin` |
+| `status` | enum | `active` / `inactive` |
+| `notify_new_order` | boolean default true | Recevoir email nouvelle commande |
+| `two_factor_secret` | varchar(255) nullable | Secret 2FA |
+| `two_factor_confirmed_at` | timestamp nullable | |
+| `last_login_at` | timestamp nullable | |
+| `created_at` | timestamp | |
+| `updated_at` | timestamp | |
+
+> Règles : minimum 1 super_admin actif permanent. Emails uniquement aux admins avec `notify_new_order = true`. Jamais d'email à l'abonné.
+
+---
+
+## 4. MODULE DE PAIEMENT DATATRANS
+
+**Documentation** : https://docs.datatrans.ch/docs/introduction
+
+### 4.1 Moyens de paiement acceptés (UNIQUEMENT ces 5)
+
+| Moyen | Type |
+|---|---|
+| Visa | Carte de crédit |
+| Visa Debit | Carte de débit |
+| MasterCard | Carte de crédit |
+| MasterCard Debit | Carte de débit |
+| TWINT | Paiement mobile suisse |
+
+> Tous les autres moyens Datatrans sont **explicitement exclus**.
+
+### 4.2 Mode d'intégration
+
+Utiliser **Redirect & Lightbox** ou **Secure Fields** — à définir selon les credentials reçus.
+
+### 4.3 Données de test sandbox
+
+**Endpoint** : `https://api.sandbox.datatrans.com`
+
+| Moyen | Numéro | CVV | Expiry |
+|---|---|---|---|
+| Visa | 4111 1111 1111 1111 | 123 | 06/28 |
+| Visa Debit | 4444 0901 0101 0103 | 123 | 06/28 |
+| MasterCard | 5404 0000 0000 0001 | 123 | 06/28 |
+| MasterCard Debit | 5500 0000 0000 0004 | 123 | 06/28 |
+| TWINT | TWINT Configurator — env. PAT | — | — |
+
+**Règles montants test** :
+- CHF 0–90.00 → autorisé ✅
+- CHF 90.01–100.00 → refusé (limite) ❌
+- CHF 100.01–110.00 → référal ⚠️
+- CHF 110.01+ → refusé (volée) ❌
+
+OTP 3D Secure : `4000` (succès) / `4009` (échec)
+
+---
+
+## 5. COMPORTEMENT LOGICIEL & TUNNEL D'ACHAT
+
+### 5.1 Page d'accueil
+
+- Affiche uniquement les types d'abonnement avec `status = online`
+- Layout pricing page (référence kDrive) avec charte bat-id
+- **Sélecteur de durée** : 12 mois / 24 mois / 36 mois — prix mis à jour dynamiquement sans rechargement
+- Badge `"-X%"` affiché uniquement sur l'option 36 mois
+- Une carte par type d'abonnement actif
+- Valeurs illimitées affichées avec `∞` ou "Illimité"
+- Bouton "Commander" → déclenche le popin d'identification
+
+### 5.2 Étape 1 — Popin d'identification
+
+Popin élégant avec **backdrop blur** de l'arrière-plan.
+
+**Champ téléphone** :
+- Sélecteur international de pays avec indicatif (librairie `intl-tel-input` ou équivalent)
+- Détection automatique du pays par IP → pré-sélection
+- **Suisse (+41) TOUJOURS en tête de liste** — clientèle majoritairement suisse
+- Si VPN ou IP non reconnue → Suisse sélectionnée par défaut
+- Validation format E.164 avant envoi
+
+**Ordre prioritaire des pays** : 🇨🇭 +41 → 🇫🇷 +33 → 🇩🇪 +49 → 🇮🇹 +39 → 🇦🇹 +43 → reste alphabétique
+
+**Logique de vérification** :
+```
+Appel webservice bat-id.ch avec numéro mobile
+    ├── Utilisateur reconnu
+    │     → Mémoriser bat_id en session Laravel
+    │     → Aller au panier (5.3)
+    └── Utilisateur non reconnu
+          → Popin bienveillant : "Vous n'avez pas encore l'app bat-id"
+          → Bouton → https://bat-id.ch/qr-login (nouvel onglet)
+```
+
+**Spinner élégant** pendant l'appel webservice. Feedback visuel immédiat.
+
+### 5.3 Étape 2 — Panier
+
+**À l'entrée dans le panier** : rechercher si l'utilisateur (bat_id) a une commande avec `expires_at > aujourd'hui`.
+
+#### Cas A — Panier standard (pas d'abonnement actif)
+
+Affichage :
+- Type d'abonnement sélectionné + caractéristiques complètes
+- Durée choisie (12/24/36 mois)
+- Date début : aujourd'hui
+- Date fin : aujourd'hui + durée
+- Prix TTC avec calcul dynamique
+- Champ code promo (voir ci-dessous)
+- Case CGV obligatoire → lien https://bat-id.ch/terms (nouvel onglet)
+
+#### Cas B — Panier upgrade (abonnement actif détecté)
+
+**Règle** : le nouvel abonnement doit être de **valeur supérieure**. Sinon → bloqué avec message explicatif.
+
+**Calcul prorata** :
+```
+Valeur résiduelle = (price_paid / nb_jours_total) × nb_jours_restants
+```
+
+**Affichage du panier upgrade** :
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VOTRE ABONNEMENT ACTIF
+Type : [nom], validité jusqu'au [date]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NOUVEL ABONNEMENT
+Prix catalogue TTC                CHF XX.XX
+- Rabais 36 mois (X%) si applic.  CHF -X.XX
+= Sous-total après rabais durée   CHF XX.XX
+- Code promo [CODE] (X%)          CHF -X.XX
+= Sous-total après promos         CHF XX.XX
+- Prorata résiduel abonnement actif CHF -X.XX
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOTAL À PAYER TTC                 CHF XX.XX
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"Votre prorata de CHF X.XX est immédiatement
+récupéré et déduit de votre nouvelle commande."
+```
+
+#### Gestion du code promo dans le panier
+
+- Champ de saisie code promo **après** le bloc de durée
+- Validation AJAX en temps réel (pas de rechargement)
+- Vérifications : période de validité, périmètre bat-id, limite utilisateur
+
+| Action | Comportement |
+|---|---|
+| Code valide | Affichage du % et recalcul immédiat |
+| Code invalide/expiré | Message d'erreur bienveillant — total inchangé |
+| Changement de durée | Recalcul complet — code maintenu |
+| Suppression du code | Réinitialisation au sous-total sans promo |
+| Changement d'abonnement | Code réinitialisé — nouvelle vérification |
+
+#### CGV
+
+- Case à cocher obligatoire — commande bloquée sans validation
+- Texte : *"J'ai lu et j'accepte les Conditions Générales de Vente de bat-id.ch"*
+- Lien → `https://bat-id.ch/terms` (nouvel onglet)
+- Enregistrer : `cgv_accepted_at` + `cgv_version` dans la commande
+
+### 5.4 Séquence post-paiement
+
+> **CRITIQUE** : Aucune mise à jour de données avant confirmation certaine du webhook Datatrans (statut `authorized` ou `settled`).
+
+```
+1. Paiement initié → redirection Datatrans
+2. Webhook Datatrans reçu (authorized/settled)
+3. Transaction atomique Laravel :
+   a. Si upgrade → mettre à jour ancienne commande :
+      - status = 'replaced'
+      - expires_at = aujourd'hui
+      - replacement_note = "Remboursement pour nouvel engagement de type supérieur"
+   b. Créer nouvelle commande avec toutes les données
+   c. Générer token UUID v4 unique pour la facture
+   d. Générer facture PDF → stocker dans storage/invoices/
+   e. Définir invoice_url = https://subscribers.bat-i.ch/invoice/{token}
+4. Notification API sortante bat-id.ch (via Queue Laravel)
+5. Email notification aux admins cochés (via SMTP Plesk + Queue)
+6. Enregistrement logs paiement
+7. Affichage page de confirmation
+```
+
+En cas d'erreur dans la transaction → **rollback complet**.
+
+### 5.5 Page de confirmation post-paiement
+
+- Page dédiée, design premium charte bat-id
+- Animation succès (checkmark vert animé)
+- **Accessible une seule fois** — rechargement → redirection page d'accueil
+
+**Contenu** :
+- Message de remerciement chaleureux
+- Tous les détails de l'abonnement (type, dates, toutes les caractéristiques)
+- Prix payé, moyen de paiement, N° commande
+- Invitation à retourner dans l'app bat-id
+- Bouton → `https://bat-id.ch/qr-login`
+- Info : "Votre facture a été transmise à bat-id.ch"
+
+**En cas d'échec paiement** : page alternative claire avec possibilité de réessayer sans repartir de zéro.
+
+---
+
+## 6. CHARTE GRAPHIQUE
+
+### 6.1 Palette officielle (confirmée par charte PDF source)
+
+| Couleur | Nom | HEX | RGB |
+|---|---|---|---|
+| Vert cyan | Vert bat-id | `#3DFF9E` | R:61 V:255 B:158 |
+| Bleu | Bleu bat-id | `#0050FF` | R:0 V:80 B:255 |
+| Marine | Marine bat-id | `#00004D` | R:0 V:0 B:77 |
+| Blanc | Blanc | `#FFFFFF` | R:255 V:255 B:255 |
+
+**Dégradé officiel** :
+```css
+background: linear-gradient(
+  to top right,
+  #3DFF9E 0%, #38F3A4 6%, #2DD3B6 17%,
+  #1B9FD2 32%, #0050FF 52%, #00004D 84%
+);
+```
+
+**Tailwind config** :
+```js
+colors: {
+  'batid-vert':   '#3DFF9E',
+  'batid-bleu':   '#0050FF',
+  'batid-marine': '#00004D',
+}
+```
+
+### 6.2 Assets SVG disponibles
+
+Tous les fichiers SVG sont dans `/public/assets/brand/`
+
+**Logos horizontaux** (2692×595px) :
+- `BATID_Logo_blanc.svg` → sur fond sombre
+- `BATID_Logo_bleu.svg` → sur fond blanc/clair
+- `BATID_Logo_marine.svg` → sur fond blanc/vert
+- `BATID_Logo_vert.svg` → sur fond marine/bleu
+
+**Logos avec fond** (2692×912px) :
+- `BATID_Logo_Fond-marine_1.svg` → **header principal** (fond marine, logo vert)
+- `BATID_Logo_Fond-marine_2.svg` → variante (fond marine, logo bleu)
+- `BATID_Logo_Fond-bleu_1.svg` → fond bleu, logo vert
+- `BATID_Logo_Fond-bleu_2.svg` → fond bleu, logo marine
+- `BATID_Logo_Fond-vert_1.svg` → fond vert, logo bleu
+- `BATID_Logo_Fond-vert_2.svg` → fond vert, logo marine
+- `BATID_Logo_Fond-degrade.svg` → **page de confirmation / premium**
+
+**Monogrammes** (506×506px) :
+- `BATID_Monogramme_degrade_neg_icoNAT.svg` → **favicon / icône**
+- `BATID_Monogramme_blanc.svg` → sur fond sombre
+- `BATID_Monogramme_bleu.svg` → sur fond clair
+- `BATID_Monogramme_marine.svg` → sur fond blanc/vert
+- `BATID_Monogramme_vert.svg` → sur fond marine/bleu
+- `BATID_Monogramme_bleu_neg.svg` → fond bleu, icône blanche
+- `BATID_Monogramme_marine_neg.svg` → fond marine, icône blanche
+- `BATID_Monogramme_vert_neg.svg` → fond vert, icône blanche
+- `BATID_Monogramme_degrade.svg` → icône dégradé
+- `BATID_Monogramme_degrade_neg.svg` → fond blanc, icône dégradé
+
+### 6.3 Utilisation par contexte
+
+| Contexte | Logo | Monogramme |
+|---|---|---|
+| Header partie publique | `BATID_Logo_Fond-marine_1.svg` | — |
+| Favicon | — | `BATID_Monogramme_degrade_neg_icoNAT.svg` |
+| Emails admin | `BATID_Logo_blanc.svg` sur fond `#00004D` | — |
+| Facture PDF | `BATID_Logo_marine.svg` sur fond blanc | — |
+| Page de confirmation | `BATID_Logo_Fond-degrade.svg` | — |
+| Dashboard admin header | `BATID_Logo_blanc.svg` sur fond `#00004D` | — |
+
+### 6.4 Typographie
+
+À confirmer — sans-serif géométrique moderne (style Exo 2 ou Inter). Utiliser Inter comme fallback en attendant confirmation.
+
+---
+
+## 7. ENVIRONNEMENTS & STRATÉGIE DE TEST
+
+### 7.1 Mock webservice bat-id.ch
+
+Sur `subscribers-test.bat-i.ch`, le webservice bat-id.ch est simulé localement via un service Laravel mock.
+
+| Paramètre | Valeur |
+|---|---|
+| Mode | `BAT_ID_API_MODE=mock` |
+| Numéro valide | `+41792094478` |
+| bat-ID retourné | `BAT-TEST-0001` |
+| Tout autre numéro | Retourne "utilisateur non reconnu" |
+
+**Architecture** : Créer une interface `BatIdServiceInterface` avec deux implémentations :
+- `BatIdMockService` — utilisé si `BAT_ID_API_MODE=mock`
+- `BatIdApiService` — utilisé si `BAT_ID_API_MODE=live`
+
+Bascule via `.env` sans modification de code.
+
+### 7.2 Configuration `.env` environnement de test
+
+```env
+APP_NAME="bat-id Subscribers"
+APP_ENV=testing
+APP_DEBUG=true
+APP_URL=https://subscribers-test.bat-i.ch
+
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=apcom_subscribers_test
+DB_USERNAME=apcom_sub_test
+DB_PASSWORD=WoJHbziio2jn4_*1
+
+MAIL_MAILER=smtp
+MAIL_HOST=mail.bat-i.ch
+MAIL_PORT=587
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=subscribers@bat-i.ch
+MAIL_FROM_NAME="bat-id Subscribers"
+MAIL_USERNAME=
+MAIL_PASSWORD=
+
+BAT_ID_API_MODE=mock
+BAT_ID_MOCK_PHONE=+41792094478
+BAT_ID_MOCK_BATID=BAT-TEST-0001
+
+DATATRANS_ENV=sandbox
+DATATRANS_API_URL=https://api.sandbox.datatrans.com
+DATATRANS_MERCHANT_ID=
+DATATRANS_SIGN_KEY=
+
+BAT_ID_OUTGOING_API_URL=
+BAT_ID_OUTGOING_API_KEY=
+BAT_ID_OUTGOING_TIMEOUT=10
+BAT_ID_OUTGOING_MAX_RETRIES=5
+
+QUEUE_CONNECTION=redis
+CACHE_DRIVER=redis
+SESSION_DRIVER=redis
+```
+
+---
+
+## 8. API SORTANTE VERS bat-id.ch
+
+### 8.1 Déclencheurs
+
+| Événement | Moment |
+|---|---|
+| `subscription_activated` | Paiement confirmé — nouvel abonnement |
+| `subscription_upgraded` | Upgrade validé |
+| `subscription_expiring_soon` | J-30 avant expiration (job quotidien 08h00) |
+| `subscription_expired` | Date d'expiration atteinte |
+
+### 8.2 Payload envoyé
+
+```json
+{
+  "bat_id": "BAT-XXXXX",
+  "event": "subscription_activated",
+  "invoice_url": "https://subscribers.bat-i.ch/invoice/{uuid_token}",
+  "subscription": {
+    "order_id": "CMD-000001",
+    "type": "Premium",
+    "status": "active",
+    "started_at": "2026-04-14T10:00:00Z",
+    "expires_at": "2027-04-14T10:00:00Z",
+    "duration_months": 12,
+    "features": {
+      "parcelles": 100,
+      "parcelles_unlimited": false,
+      "alertes": 50,
+      "stockage_go": 20,
+      "stockage_unlimited": false,
+      "cloud_externe": true,
+      "lot_sauvegarde": true,
+      "workspace": true,
+      "workspace_quantity": 3,
+      "workspace_unlimited": false
+    }
+  }
+}
+```
+
+### 8.3 Payload J-30
+
+```json
+{
+  "bat_id": "BAT-XXXXX",
+  "event": "subscription_expiring_soon",
+  "subscription": {
+    "order_id": "CMD-000001",
+    "type": "Premium",
+    "expires_at": "2027-04-14T10:00:00Z",
+    "days_remaining": 30
+  }
+}
+```
+
+### 8.4 Robustesse
+
+- Toutes les notifications via **Queue Laravel** (pas d'appel synchrone)
+- Retry exponentiel : 1min → 5min → 15min → 1h → 24h (max 5 tentatives)
+- Log complet de chaque tentative
+- bat-id.ch doit retourner HTTP 200
+- Timeout : 10 secondes
+- Si échec après 5 tentatives → email alerte super admins
+- Notification J-30 : envoyée **une seule fois** par commande (flag `expiry_notified_at`)
+
+### 8.5 Sécurité API
+
+```
+Header: X-Subscribers-API-Key: {secret_key}
+Signature payload: HMAC-SHA256
+Transport: HTTPS/TLS 1.3 obligatoire
+```
+
+### 8.6 Facture PDF — URL non prédictive
+
+```
+Format : https://subscribers.bat-i.ch/invoice/{uuid_v4}
+Token  : Str::uuid() Laravel — UUID v4 aléatoire
+Accès  : URL directe sans auth — sécurisée par imprévisibilité
+```
+
+L'URL de la facture est transmise à bat-id.ch dans le payload API. bat-id.ch la stocke et la délivre à son utilisateur. **Aucun email n'est envoyé à l'abonné.**
+
+---
+
+## 9. EXPÉRIENCE UTILISATEUR UX
+
+### Principes
+
+| Principe | Exigence |
+|---|---|
+| Simple | Aucune étape inutile |
+| Fluide | Livewire/Alpine.js — pas de rechargement brutal |
+| Rapide | Parcours complet < 2 minutes |
+| Responsive | Mobile-first — toute la partie publique |
+| Feedback | Spinner sur chaque appel API, messages d'erreur humains |
+
+### Règles UX globales
+
+- Transitions CSS fluides sur toutes les interactions
+- Validation des champs en temps réel
+- Messages d'erreur clairs, bienveillants, jamais techniques
+- Boutons avec états : normal / hover / loading / succès / erreur
+- Sur mobile : bon type de clavier (numérique pour téléphone)
+- Boutons d'action toujours visibles sans scroller
+- Taille minimale zones tactiles : 44×44px
+
+---
+
+## 10. STANDARDS TECHNIQUES
+
+### 10.1 Stack technique
+
+| Composant | Technologie |
+|---|---|
+| Backend | Laravel 11+ |
+| PHP | 8.2+ — typage strict |
+| Frontend | Livewire 3 + Alpine.js |
+| CSS | Tailwind CSS 3 |
+| Build | Vite |
+| Cache/Sessions/Queue | Redis |
+| PDF | Laravel + DomPDF ou Snappy |
+| Analyse statique | PHPStan/Larastan level max |
+| Code style | Laravel Pint (PSR-12) |
+| Tests | PHPUnit — couverture ≥ 80% logique métier |
+
+### 10.2 Architecture Laravel
+
+- **SOLID** — respect strict
+- **Repository Pattern** — abstraction couche données
+- **Service Layer** — logique métier dans des services dédiés
+- **Interface/Contract** — pour BatIdService, DatatransService etc.
+- **Event/Listener** — pour notifications et webhooks
+- **Jobs & Queues** — toutes tâches asynchrones (emails, API bat-id)
+- **Transactions atomiques** — toutes opérations critiques commande/upgrade
+
+### 10.3 Sécurité
+
+| Norme | Application |
+|---|---|
+| OWASP Top 10 | Conformité complète |
+| CSRF | Token sur tous formulaires |
+| XSS | Échappement systématique + CSP stricte |
+| SQL Injection | ORM Eloquent exclusivement |
+| Rate Limiting | Tous endpoints sensibles |
+| 2FA | Obligatoire pour tous les admins |
+| TLS 1.3 | HTTPS partout + HSTS |
+| RGPD / LPD | Conformité Suisse et EU |
+| PCI DSS | Zéro donnée carte stockée localement |
+| Soft Deletes | Sur toutes les tables critiques |
+
+### 10.4 Performance
+
+- Score Lighthouse ≥ 95/100
+- First Contentful Paint < 1.5s
+- Time to Interactive < 2s
+- Images : WebP + lazy loading
+- Assets : minifiés + Gzip/Brotli
+
+### 10.5 Monitoring
+
+- **Laravel Telescope** en test
+- **Laravel Horizon** pour les queues
+- **Logs structurés JSON** niveaux debug/info/warning/error/critical
+- **Health check** endpoint `/health`
+
+---
+
+## 11. INTERNATIONALISATION
+
+### Périmètre
+
+| Interface | Multilingue |
+|---|---|
+| Partie publique | ✅ OUI |
+| Dashboard admin | ❌ NON — Français uniquement |
+
+### Langues initiales
+
+| Langue | Code | Statut |
+|---|---|---|
+| Français | `fr` | Langue par défaut — non supprimable |
+| Allemand | `de` | Prioritaire |
+| Italien | `it` | Prioritaire |
+| Anglais | `en` | Internationale |
+
+### Comportement
+
+- Détection automatique via navigateur → pré-sélection langue
+- Fallback vers français si langue non disponible
+- Sélecteur de langue visible sur toutes les pages publiques
+- Facture PDF générée dans la langue active au moment de la commande
+- Si traduction manquante → affichage en français + indicateur dans dashboard
+
+### Contenus traduisibles
+
+- Types d'abonnement (nom, description, caractéristiques)
+- Codes de promotion (titre, désignation)
+- Toutes chaînes interface publique via Laravel Lang
+- Messages d'erreur utilisateur
+
+---
+
+## 12. INFRASTRUCTURE & HÉBERGEMENT
+
+### 12.1 Serveur
+
+| Paramètre | Valeur |
+|---|---|
+| Hébergeur | Kreativ Medias |
+| Panel | Plesk |
+| IP | 94.126.17.132 |
+| PHP | 8.2+ — PHP-FPM + OPcache |
+| Base de données | MySQL/MariaDB localhost:3306 |
+| SSL | Let's Encrypt via Plesk — auto-renouvellement |
+| Redis | Sessions, cache, queues |
+
+### 12.2 Base de données de test
+
+```env
+DB_DATABASE=apcom_subscribers_test
+DB_USERNAME=apcom_sub_test
+DB_PASSWORD=WoJHbziio2jn4_*1
+DB_HOST=localhost
+DB_PORT=3306
+```
+
+### 12.3 Déploiement
+
+- Git → GitHub → Plesk (deploy via Plesk Git)
+- Document root : `/subscribers-test.bat-i.ch/httpdocs/public`
+- Cron Laravel : `* * * * * php /path/artisan schedule:run`
+
+### 12.4 Rétention logs & Backups
+
+| Type | Rétention |
+|---|---|
+| Logs Laravel | 30 jours rotation quotidienne |
+| Logs paiement Datatrans | 1 an (légal) |
+| Logs API sortante | 90 jours |
+| Logs accès admin | 6 mois |
+| Backup DB | Quotidien — 30 jours |
+| Backup fichiers | Hebdomadaire — 4 semaines |
+| Factures PDF | 5 ans (légal Suisse) |
+| Backup serveur complet | Hebdomadaire — 2 semaines |
+
+---
+
+## 13. DASHBOARD ADMINISTRATEUR
+
+### 13.1 Principes
+
+- Langue : **Français uniquement**
+- Accès : email + mot de passe + **2FA obligatoire**
+- Responsive mobile/tablette/desktop
+- Session : expiration après 2h d'inactivité
+
+### 13.2 Navigation
+
+```
+🏠 Accueil — KPIs
+👥 Abonnés — Liste & Détail
+📦 Abonnements — Types & Commandes
+🎟️ Promotions — Codes & Groupes
+💳 Paiements — Journal transactions Datatrans
+🌐 Langues — Gestion & Traductions
+⚙️ Configuration — Admins & Paramètres
+📋 Logs — Activité admin & API
+```
+
+### 13.3 KPIs page d'accueil
+
+- Abonnements actifs (total)
+- Commandes du jour (nb + CHF)
+- Commandes du mois (nb + CHF)
+- Expirations dans 30 jours
+- Abonnements expirés non renouvelés
+- Alertes système (jobs en échec, API indisponible)
+
+### 13.4 Module Abonnés
+
+**Liste** : bat-ID, téléphone, type abonnement actif, statut, date première commande  
+**Fonctionnalités** : recherche, filtres, pagination, export CSV  
+**Détail** : historique commandes, accès factures PDF, logs API, bouton "Rejouer notification"
+
+### 13.5 Module Types d'abonnement
+
+**Liste** : nom, statut, prix, rabais 36 mois, taux traduction  
+**Fonctionnalités** : créer/modifier/dupliquer/désactiver, réordonner drag & drop, aperçu carte publique, gestion traductions inline
+
+### 13.6 Module Commandes
+
+**Colonnes** : N° commande, bat-ID, type, durée, montant, paiement, dates, statut, facture PDF  
+**Fonctionnalités** : recherche, filtres, export CSV, détail complet avec métadonnées + logs  
+**Actions** : Rejouer notification API bat-id.ch
+
+### 13.7 Module Codes de promotion
+
+**Colonnes** : code, titre, validité, périmètre, utilisations/limite, statut  
+**Fonctionnalités** : créer/modifier/dupliquer/désactiver, voir toutes les utilisations
+
+### 13.8 Module Groupes d'utilisateurs
+
+- Créer/modifier/supprimer des groupes
+- Ajouter/retirer des membres (recherche par bat-ID)
+- Vue membres avec statut abonnement
+
+### 13.9 Module Journal transactions Datatrans
+
+**Colonnes** : ID transaction, N° commande, bat-ID, montant, moyen, statut, date  
+**Actions** : voir payload webhook brut complet, export CSV
+
+### 13.10 Module Gestion Langues & Traductions
+
+- Liste langues avec % de complétion
+- Ajouter/activer/désactiver/réordonner
+- Interface de traduction : toutes chaînes avec source FR et champ de traduction
+- Filtre "manquants uniquement"
+- Import/Export JSON
+- Sauvegarde automatique à la saisie
+
+### 13.11 Module Administrateurs
+
+- Créer/modifier/désactiver des comptes admin
+- Gestion rôles (super_admin / admin)
+- Toggle notification nouvelle commande
+- Réinitialisation mot de passe
+- Gestion 2FA
+- Règle : minimum 1 super_admin actif permanent
+
+### 13.12 Paramètres généraux
+
+| Paramètre | Valeur par défaut |
+|---|---|
+| URL CGV | https://bat-id.ch/terms |
+| Délai notification expiration | 30 jours |
+| Timeout session admin | 120 minutes |
+| Email expéditeur | subscribers@bat-i.ch |
+| Mode maintenance | false |
+
+### 13.13 Journal d'activité admin
+
+Toutes les actions sensibles loguées : admin, action, module, données avant/après (JSON), IP, horodatage.
+
+### 13.14 Journal API
+
+Direction, événement, bat-ID, statut, nb tentatives, payload complet, horodatage.  
+Action disponible : **Rejouer manuellement** un appel échoué.
+
+---
+
+## POINTS EN ATTENTE
+
+| Point | Statut |
+|---|---|
+| Credentials API bat-id.ch (endpoint + clé) | ⏳ Après premier test fonctionnel |
+| Credentials Datatrans production | ⏳ Avant mise en production |
+| Credentials Datatrans sandbox (Merchant ID) | ⏳ Depuis testaccount.datatrans.com |
+| Credentials SMTP Plesk | ⏳ À configurer dans Plesk |
+| Typographie officielle bat-id | ⏳ À confirmer |
+| Page CGV accessible (bat-id.ch/terms erreur 415) | ⏳ À corriger côté bat-id.ch |
+| Documentation API bat-id.ch réception | ⏳ URL endpoint + format réponse |
+
+---
+
+*Cahier des charges v1.0 — Avril 2026 — bat-id Subscribers — CONFIDENTIEL*
