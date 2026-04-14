@@ -17,7 +17,7 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center">
-                    <img src="{{ asset('assets/brand/BATID_Logo_Fond-marine_1.svg') }}" alt="bat-id" class="h-10">
+                    <img src="{{ asset('assets/brand/BATID_Logo_blanc.svg') }}" alt="bat-id" class="h-8">
                 </a>
                 <div class="flex items-center gap-4">
                     <livewire:language-switcher />
@@ -32,9 +32,10 @@
     </main>
 
     <!-- Footer -->
-    <footer class="mt-20 bg-batid-marine py-8 text-white/70">
-        <div class="mx-auto max-w-7xl px-4 text-center text-sm">
-            <p>&copy; {{ date('Y') }} bat-id.ch &mdash; {{ __('Tous droits réservés') }}</p>
+    <footer class="mt-20 bg-batid-marine py-10 text-white/70">
+        <div class="mx-auto max-w-7xl px-4 text-center">
+            <img src="{{ asset('assets/brand/BATID_Monogramme_blanc.svg') }}" alt="bat-id" class="mx-auto mb-4 h-10 opacity-50">
+            <p class="text-sm">&copy; {{ date('Y') }} bat-id.ch &mdash; {{ __('Tous droits réservés') }}</p>
         </div>
     </footer>
 

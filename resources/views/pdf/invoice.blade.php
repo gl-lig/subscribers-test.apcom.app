@@ -3,8 +3,7 @@
 <style>
     body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #333; margin: 0; padding: 40px; }
     .header { display: flex; justify-content: space-between; margin-bottom: 40px; border-bottom: 3px solid #00004D; padding-bottom: 20px; }
-    .logo { font-size: 28px; font-weight: bold; color: #00004D; }
-    .logo span { color: #0050FF; }
+    .logo img { height: 40px; }
     .title { font-size: 24px; font-weight: bold; color: #00004D; text-align: right; }
     .info-grid { display: table; width: 100%; margin-bottom: 30px; }
     .info-col { display: table-cell; width: 50%; vertical-align: top; }
@@ -19,7 +18,7 @@
 </head>
 <body>
     <table width="100%"><tr>
-        <td><div class="logo">bat<span>-id</span></div></td>
+        <td><div class="logo"><img src="{{ public_path('assets/brand/BATID_Logo_bleu.svg') }}" alt="bat-id"></div></td>
         <td style="text-align:right"><div class="title">FACTURE</div><div style="color:#666;font-size:11px;">{{ $order->order_number }}</div></td>
     </tr></table>
     <div style="border-bottom:3px solid #00004D;margin:15px 0 30px;"></div>

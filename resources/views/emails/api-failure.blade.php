@@ -3,7 +3,7 @@
 <body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f5f5f5;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:20px;">
 <table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;overflow:hidden;">
-    <tr><td style="background:#DC2626;padding:24px;text-align:center;color:#fff;font-size:20px;font-weight:bold;">ALERTE — Échec notification API</td></tr>
+    <tr><td style="background:#DC2626;padding:24px;text-align:center;"><img src="{{ asset('assets/brand/BATID_Logo_blanc.svg') }}" alt="bat-id" style="height:28px;display:inline-block;margin-bottom:8px;"><br><span style="color:#fff;font-size:18px;font-weight:bold;">ALERTE — Échec notification API</span></td></tr>
     <tr><td style="padding:32px;">
         <p style="color:#333;font-size:14px;">Après 5 tentatives, la notification n'a pas pu être envoyée à bat-id.ch.</p>
         <table width="100%" cellpadding="8" cellspacing="0" style="font-size:14px;margin-top:16px;">

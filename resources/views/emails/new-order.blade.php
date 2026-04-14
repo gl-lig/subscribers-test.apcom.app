@@ -3,7 +3,7 @@
 <body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f5f5f5;">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:20px;">
 <table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-    <tr><td style="background:#00004D;padding:24px;text-align:center;"><span style="color:#3DFF9E;font-size:24px;font-weight:bold;">bat-id</span><span style="color:#fff;font-size:16px;margin-left:8px;">Subscribers</span></td></tr>
+    <tr><td style="background:#00004D;padding:24px;text-align:center;"><img src="{{ asset('assets/brand/BATID_Logo_blanc.svg') }}" alt="bat-id" style="height:36px;display:inline-block;"></td></tr>
     <tr><td style="padding:32px;">
         <h2 style="color:#00004D;margin:0 0 16px;">Nouvelle commande reçue</h2>
         <table width="100%" cellpadding="8" cellspacing="0" style="font-size:14px;">
