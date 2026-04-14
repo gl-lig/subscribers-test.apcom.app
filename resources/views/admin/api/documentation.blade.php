@@ -228,7 +228,9 @@ final url = '{{ $baseUrl }}/deeplink?token=$encoded.$signature';</pre>
                 <p class="mb-1.5 text-xs font-semibold text-gray-500">URL generee</p>
                 <div class="flex items-center gap-2 rounded-lg bg-gray-900 p-3 cursor-pointer group"
                      @click="navigator.clipboard.writeText('{{ session('test_url') }}'); copied = true; setTimeout(() => copied = false, 2000)">
-                    <code class="flex-1 truncate text-sm text-green-400" title="{{ session('test_url') }}">{{ session('test_url') }}</code>
+                    <div class="flex-1 min-w-0 overflow-x-auto">
+                        <code class="whitespace-nowrap text-sm text-green-400">{{ session('test_url') }}</code>
+                    </div>
                     <span x-show="!copied" class="flex-shrink-0 text-gray-400 group-hover:text-white transition">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     </span>
