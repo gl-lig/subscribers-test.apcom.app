@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
 class AdminLanguageController extends Controller
@@ -57,6 +58,8 @@ class AdminLanguageController extends Controller
 
         $path = lang_path("{$locale}.json");
         File::put($path, json_encode($translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+        Artisan::call('cache:clear');
 
         return response()->json(['status' => 'ok']);
     }
