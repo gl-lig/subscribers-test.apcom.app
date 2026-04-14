@@ -7,7 +7,7 @@ use Livewire\Component;
 
 class PricingPage extends Component
 {
-    public int $selectedDuration = 12;
+    public int $selectedDuration = 24;
     public ?int $selectedTypeId = null;
     public bool $showPhoneModal = false;
 
