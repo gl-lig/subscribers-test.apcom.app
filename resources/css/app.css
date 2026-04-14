@@ -36,6 +36,15 @@
     to { transform: rotate(360deg); }
 }
 
+/* Slider settle shimmy */
+@keyframes settle {
+    0% { transform: translateX(var(--tw-translate-x, 0)); }
+    30% { transform: translateX(calc(var(--tw-translate-x, 0) + 4px)); }
+    60% { transform: translateX(calc(var(--tw-translate-x, 0) - 2px)); }
+    80% { transform: translateX(calc(var(--tw-translate-x, 0) + 1px)); }
+    100% { transform: translateX(var(--tw-translate-x, 0)); }
+}
+
 /* intl-tel-input overrides */
 .iti {
     width: 100%;
