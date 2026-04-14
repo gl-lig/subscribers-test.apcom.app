@@ -45,6 +45,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/replay-notification', [AdminOrderController::class, 'replayNotification'])->name('orders.replay');
+        Route::delete('/orders/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
 
         // Promo codes
         Route::resource('promo-codes', AdminPromoCodeController::class)->except(['show']);

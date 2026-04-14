@@ -49,4 +49,15 @@ class AdminOrderController extends Controller
 
         return back()->with('success', 'Notification rejouée.');
     }
+
+    public function destroy(Order $order)
+    {
+        AdminLogService::log('delete', 'orders', $order->toArray());
+
+        $order->paymentLogs()->delete();
+        $order->metadata()->delete();
+        $order->delete();
+
+        return redirect()->route('admin.orders.index')->with('success', "Commande {$order->order_number} supprimée.");
+    }
 }
