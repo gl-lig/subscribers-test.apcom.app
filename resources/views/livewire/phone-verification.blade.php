@@ -62,7 +62,9 @@
         @endif
 
         <button @click="submit()" wire:loading.attr="disabled" wire:target="verifyPhone"
-                class="w-full rounded-xl bg-batid-marine py-3.5 text-sm font-bold text-batid-vert transition hover:bg-batid-bleu hover:text-white disabled:opacity-50">
+                class="w-full rounded-full py-3.5 text-sm font-bold text-white transition hover:opacity-90 disabled:opacity-50"
+                style="background: linear-gradient(to right, #3DFF9E 0%, #0050FF 50%, #00004D 100%);"
+                >
             <span wire:loading.remove wire:target="verifyPhone">{{ __('Vérifier') }}</span>
             <span wire:loading wire:target="verifyPhone" class="flex items-center justify-center gap-2">
                 <span class="spinner"></span> {{ __('Chargement...') }}

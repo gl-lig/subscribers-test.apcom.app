@@ -92,7 +92,9 @@
 
         <button wire:click="processPayment" wire:loading.attr="disabled"
                 {{ !$cgvAccepted ? 'disabled' : '' }}
-                class="w-full rounded-xl bg-batid-marine py-4 text-lg font-bold text-batid-vert transition hover:bg-batid-bleu hover:text-white disabled:cursor-not-allowed disabled:opacity-50">
+                class="w-full rounded-full py-4 text-lg font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                style="background: linear-gradient(to right, #3DFF9E 0%, #0050FF 50%, #00004D 100%);"
+                >
             <span wire:loading.remove>{{ __('Payer') }} CHF {{ number_format($prices['total'] ?? 0, 2) }}</span>
             <span wire:loading class="flex items-center justify-center gap-2"><span class="spinner"></span> {{ __('Chargement...') }}</span>
         </button>

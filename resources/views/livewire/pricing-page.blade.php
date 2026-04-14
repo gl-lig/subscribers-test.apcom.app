@@ -1,6 +1,6 @@
 <div>
     <!-- Hero -->
-    <section class="bg-batid-marine py-16 text-center text-white">
+    <section class="py-16 text-center text-white" style="background: linear-gradient(to top right, #3DFF9E 0%, #38F3A4 6%, #2DD3B6 17%, #1B9FD2 32%, #0050FF 52%, #00004D 84%);">
         <div class="mx-auto max-w-4xl px-4">
             <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">{{ __('Nos abonnements') }}</h1>
             <p class="mt-4 text-lg text-white/60">{{ __("Choisissez l'abonnement qui correspond à vos besoins") }}</p>
@@ -56,7 +56,8 @@
                 </div>
 
                 <button wire:click="selectPlan({{ $type->id }})"
-                        class="mt-8 w-full rounded-xl bg-batid-marine py-3.5 text-sm font-bold text-batid-vert transition hover:bg-batid-bleu hover:text-white">
+                        class="mt-8 w-full rounded-full py-3.5 text-sm font-bold text-white transition hover:opacity-90"
+                        style="background: linear-gradient(to right, #3DFF9E 0%, #0050FF 50%, #00004D 100%);">
                     {{ __('Commander') }}
                 </button>
             </div>
