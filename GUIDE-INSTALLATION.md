@@ -21,6 +21,12 @@ Merci de bien vouloir mettre en service l'application Laravel qui se trouve sur 
 - Utilisateur : `apcom_sub_test`
 - Mot de passe : `WoJHbziio2jn4_*1`
 
+**Prérequis serveur :**
+- PHP 8.2+
+- MySQL/MariaDB
+- Node.js (pour le build frontend)
+- Pas besoin de Redis — tout fonctionne avec le filesystem et la base de données
+
 **Étapes à effectuer :**
 
 1. Cloner le dépôt dans le répertoire du domaine
@@ -39,10 +45,9 @@ Merci de bien vouloir mettre en service l'application Laravel qui se trouve sur 
    ```
    * * * * * cd /chemin/vers/httpdocs && php artisan schedule:run >> /dev/null 2>&1
    ```
-5. S'assurer que **Redis** est actif sur le serveur
-6. Configurer un **worker de queue** (Supervisor recommandé) :
+5. Configurer un **worker de queue** (Supervisor recommandé) :
    ```
-   php artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+   php artisan queue:work database --sleep=3 --tries=3 --max-time=3600
    ```
 
 Merci beaucoup !
@@ -66,7 +71,7 @@ Vous verrez la page d'abonnements avec 3 offres (Starter, Premium, Enterprise).
 2. Entrez le numéro de test : **+41 79 209 44 78**
 3. Vous arrivez dans le panier
 4. Testez le code promo **TEST20** (donne 20% de réduction)
-5. Le paiement Datatrans ne fonctionnera pas encore (il faut d'abord recevoir les credentials Datatrans)
+5. Le paiement Datatrans est configuré en mode sandbox — utilisez les cartes de test Datatrans
 
 ### Données de test créées automatiquement
 - 3 abonnements : Starter (CHF 49/an), Premium (CHF 149/an), Enterprise (CHF 349/an)
@@ -78,9 +83,5 @@ Vous verrez la page d'abonnements avec 3 offres (Starter, Premium, Enterprise).
 
 ## Ce qui reste à faire (pas urgent)
 
-| Quoi | Quand |
-|------|-------|
-| Recevoir les credentials Datatrans sandbox (Merchant ID + clé) | Avant de tester les paiements |
-| Configurer l'email SMTP dans Plesk | Pour que les notifications admin fonctionnent |
-| Recevoir l'API bat-id.ch (URL + clé) | Avant la mise en production |
-| Déposer les logos SVG bat-id dans `/public/assets/brand/` | Dès que possible |
+- Configurer l'email SMTP dans Plesk — pour que les notifications admin fonctionnent
+- Recevoir l'API bat-id.ch (URL + clé) — avant la mise en production
