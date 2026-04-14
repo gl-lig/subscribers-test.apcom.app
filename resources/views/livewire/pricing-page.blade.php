@@ -34,8 +34,16 @@
             window.addEventListener('resize', () => this.measure());
         },
         measure() {
-            const cards = this.$refs.track?.children;
-            if (cards && cards.length) this.cardWidth = cards[0].offsetWidth;
+            const container = this.$refs.container;
+            if (!container) return;
+            const w = container.offsetWidth;
+            if (window.innerWidth < 768) {
+                this.cardWidth = w * 0.82;
+            } else if (window.innerWidth < 1024) {
+                this.cardWidth = (w - this.gap) / 2;
+            } else {
+                this.cardWidth = (w - this.gap * 2) / 3;
+            }
         },
         visibleCards() {
             if (window.innerWidth >= 1024) return 3;
@@ -65,16 +73,19 @@
             return -(this.current * (this.cardWidth + this.gap));
         }
     }" x-resize="measure()">
-        <div class="relative mx-auto max-w-7xl px-4">
+        <div class="relative mx-auto max-w-7xl px-4" x-ref="container">
 
             {{-- Flèche gauche --}}
-            <button @click="prev()" x-show="current > 0" x-transition
-                    class="absolute -left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-gray-200 transition hover:bg-gray-50 sm:left-0">
-                <svg class="h-5 w-5 text-batid-marine" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            <button @click="prev()"
+                    class="absolute -left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full shadow-lg transition sm:-left-4 md:-left-5"
+                    :class="current > 0 ? 'bg-batid-marine text-white hover:opacity-90' : 'bg-gray-100 text-gray-300 cursor-default'"
+                    :disabled="current === 0"
+                    style="backdrop-filter: blur(4px);">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
             </button>
 
             {{-- Track --}}
-            <div class="overflow-hidden">
+            <div class="overflow-hidden px-2 sm:px-0">
                 <div x-ref="track"
                      class="flex gap-8 transition-transform duration-500 ease-out"
                      :class="settling ? 'animate-[settle_0.3s_ease-out_0.4s]' : ''"
@@ -87,7 +98,8 @@
                         $monthlyPrice = $totalPrice / $selectedDuration;
                     @endphp
                     <div wire:key="plan-{{ $type->id }}-{{ $selectedDuration }}"
-                         class="w-full flex-shrink-0 md:w-[calc((100%-4rem)/3)] flex flex-col rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200 transition hover:shadow-lg hover:ring-batid-bleu/30">
+                         class="flex-shrink-0 flex flex-col rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200 transition hover:shadow-lg hover:ring-batid-bleu/30"
+                         :style="'width:' + cardWidth + 'px'"
                         <h3 class="text-xl font-bold text-batid-marine">{{ $trans?->name ?? 'N/A' }}</h3>
                         <p class="mt-2 text-sm text-gray-500">{{ $trans?->description ?? '' }}</p>
 
@@ -122,9 +134,12 @@
             </div>
 
             {{-- Flèche droite --}}
-            <button @click="next()" x-show="current < maxIndex()" x-transition
-                    class="absolute -right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-gray-200 transition hover:bg-gray-50 sm:right-0">
-                <svg class="h-5 w-5 text-batid-marine" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            <button @click="next()"
+                    class="absolute -right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full shadow-lg transition sm:-right-4 md:-right-5"
+                    :class="current < maxIndex() ? 'bg-batid-marine text-white hover:opacity-90' : 'bg-gray-100 text-gray-300 cursor-default'"
+                    :disabled="current >= maxIndex()"
+                    style="backdrop-filter: blur(4px);">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
             </button>
 
             {{-- Dots indicateur --}}
