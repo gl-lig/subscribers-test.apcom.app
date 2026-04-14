@@ -22,6 +22,8 @@ class Cart extends Component
     public array $prices = [];
     public ?array $currentOrderData = null;
     public bool $isUpgrade = false;
+    public bool $upgradeBlocked = false;
+    public string $upgradeBlockedMessage = '';
     public bool $processing = false;
 
     public function mount(): void
@@ -156,7 +158,16 @@ class Cart extends Component
                     'expires_at' => $currentOrder->expires_at->format('d.m.Y'),
                     'price_paid' => $currentOrder->price_paid,
                     'prorata' => $currentOrder->calculateProrata(),
+                    'current_price_chf' => (float) $currentOrder->subscriptionType->price_chf,
                 ];
+
+                $newType = SubscriptionType::find($this->typeId);
+                if ($newType && (float) $newType->price_chf <= (float) $currentOrder->subscriptionType->price_chf) {
+                    $this->upgradeBlocked = true;
+                    $this->upgradeBlockedMessage = __('Vous disposez déjà d\'un abonnement :current. Seul un abonnement de valeur supérieure peut être souscrit.', [
+                        'current' => $currentOrder->subscriptionType->translation(app()->getLocale())?->name ?? '',
+                    ]);
+                }
             }
         }
     }

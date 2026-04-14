@@ -71,12 +71,15 @@
             <div class="flex justify-between text-green-600"><span>{{ __('Code promo') }} {{ $promoCode }} (-{{ $promoDiscount }}%)</span><span>- CHF {{ number_format($prices['discount_promo_amount'] ?? 0, 2) }}</span></div>
             @endif
             @if(($prices['prorata'] ?? 0) > 0)
-            <div class="flex justify-between text-green-600"><span>{{ __('Prorata résiduel') }}</span><span>- CHF {{ number_format($prices['prorata'], 2) }}</span></div>
+            <div class="flex justify-between text-green-600"><span>{{ __('Prorata résiduel abonnement actif') }}</span><span>- CHF {{ number_format($prices['prorata'], 2) }}</span></div>
             @endif
             <div class="flex justify-between border-t pt-3 text-lg font-bold text-batid-marine">
                 <span>{{ __('Total à payer TTC') }}</span><span>CHF {{ number_format($prices['total'] ?? 0, 2) }}</span>
             </div>
         </div>
+        @if(($prices['prorata'] ?? 0) > 0)
+        <p class="mt-3 text-xs text-gray-500">{{ __('Votre prorata de CHF :amount est immédiatement récupéré et déduit de votre nouvelle commande.', ['amount' => number_format($prices['prorata'], 2)]) }}</p>
+        @endif
     </div>
 
     <!-- Promo code -->
@@ -112,6 +115,24 @@
             <span wire:loading.remove>@if($type && $type->is_free){{ __('Confirmer') }}@else{{ __('Payer') }} CHF {{ number_format($prices['total'] ?? 0, 2) }}@endif</span>
             <span wire:loading class="flex items-center justify-center gap-2"><span class="spinner"></span> {{ __('Chargement...') }}</span>
         </button>
+    </div>
+    @endif
+
+    <!-- Upgrade blocked modal -->
+    @if($upgradeBlocked)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0,0,77,0.6); backdrop-filter: blur(8px);">
+        <div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
+            <div class="mb-4 flex justify-center">
+                <div class="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                    <svg class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                </div>
+            </div>
+            <h2 class="mb-2 text-center text-xl font-bold text-batid-marine">{{ __('Upgrade impossible') }}</h2>
+            <p class="mb-6 text-center text-sm text-gray-600">{{ $upgradeBlockedMessage }}</p>
+            <a href="{{ route('home') }}" class="block w-full rounded-full py-3.5 text-center text-sm font-bold text-white transition hover:opacity-90" style="background: linear-gradient(to right, #3DFF9E 0%, #0050FF 50%, #00004D 100%);">
+                {{ __('Choisir un autre abonnement') }}
+            </a>
+        </div>
     </div>
     @endif
 </div>
