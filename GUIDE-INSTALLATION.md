@@ -1,56 +1,11 @@
 # MISE EN SERVICE — bat-id Subscribers
 
-## Ce que vous devez transmettre à Kreativ Medias
+## Ce que Claude Code gère (aucune intervention de Greg)
 
-Envoyez ce message à votre hébergeur Kreativ Medias pour qu'ils mettent l'application en ligne :
-
----
-
-**Objet : Mise en service subscribers-test.apcom.app**
-
-Bonjour,
-
-Merci de bien vouloir mettre en service l'application Laravel qui se trouve sur le dépôt Git suivant :
-
-**Dépôt Git :** https://github.com/gl-lig/subscribers-test.apcom.app.git  
-**Domaine :** subscribers-test.apcom.app  
-**Utilisateur Plesk :** apcom_bat_i
-
-**Base de données (déjà créée) :**
-- Nom : `apcom_subscribers_test`
-- Utilisateur : `apcom_sub_test`
-- Mot de passe : `WoJHbziio2jn4_*1`
-
-**Prérequis serveur :**
-- PHP 8.2+
-- MySQL/MariaDB
-- Node.js (pour le build frontend)
-- Pas besoin de Redis — tout fonctionne avec le filesystem et la base de données
-
-**Étapes à effectuer :**
-
-1. Cloner le dépôt dans le répertoire du domaine
-2. Configurer le **Document Root** vers le sous-dossier `/public`
-3. Exécuter les commandes d'installation :
-   ```
-   composer install --no-dev --optimize-autoloader
-   npm ci && npm run build
-   php artisan key:generate
-   php artisan migrate --force
-   php artisan db:seed --force
-   php artisan storage:link
-   php artisan config:cache && php artisan route:cache && php artisan view:cache
-   ```
-4. Configurer la **tâche planifiée** (cron) :
-   ```
-   * * * * * cd /chemin/vers/httpdocs && php artisan schedule:run >> /dev/null 2>&1
-   ```
-5. Configurer un **worker de queue** (Supervisor recommandé) :
-   ```
-   php artisan queue:work database --sleep=3 --tries=3 --max-time=3600
-   ```
-
-Merci beaucoup !
+- Installation du projet sur le VPS Infomaniak via Coolify
+- Configuration base de données, SSL, cron, queue worker
+- Build frontend (npm run build)
+- Seeders et migrations
 
 ---
 
@@ -78,10 +33,3 @@ Vous verrez la page d'abonnements avec 3 offres (Starter, Premium, Enterprise).
 - 1 abonné test : BAT-TEST-0001
 - 1 commande test : CMD-000001
 - 1 code promo : TEST20 (20% de réduction)
-
----
-
-## Ce qui reste à faire (pas urgent)
-
-- Configurer l'email SMTP dans Plesk — pour que les notifications admin fonctionnent
-- Recevoir l'API bat-id.ch (URL + clé) — avant la mise en production
