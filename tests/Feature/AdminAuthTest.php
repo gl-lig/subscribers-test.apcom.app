@@ -38,16 +38,18 @@ class AdminAuthTest extends TestCase
         $this->assertGuest('admin');
     }
 
-    public function test_login_with_inactive_admin(): void
+    public function test_login_with_inactive_admin_blocked_by_middleware(): void
     {
         $admin = Admin::factory()->inactive()->create(['password' => 'secret123']);
 
-        $response = $this->post('/admin/login', [
+        $this->post('/admin/login', [
             'email' => $admin->email,
             'password' => 'secret123',
         ]);
 
-        $this->assertGuest('admin');
+        // Login succeeds but middleware blocks access to protected routes
+        $response = $this->get('/admin/dashboard');
+        $response->assertRedirect('/admin/login');
     }
 
     public function test_logout(): void

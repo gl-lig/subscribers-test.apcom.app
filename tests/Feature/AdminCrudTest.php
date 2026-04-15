@@ -178,6 +178,9 @@ class AdminCrudTest extends TestCase
                 'discount_pct' => 25,
                 'scope' => 'all',
                 'is_active' => true,
+                'valid_from' => now()->toDateString(),
+                'valid_until' => now()->addMonth()->toDateString(),
+                'usage_limit_per_user' => 1,
             ]);
 
         $response->assertRedirect(route('admin.promo-codes.index'));
