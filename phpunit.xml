@@ -18,7 +18,7 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
-        <env name="APP_KEY" value="base64:testing1234567890abcdefghijklmnop="/>
+        <env name="APP_KEY" value="base64:2X/v4MObri0Bw/K4VPQDR/fbcLVI1X/r2H2SkwBFZ4g="/>
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
         <env name="CACHE_DRIVER" value="array"/>
