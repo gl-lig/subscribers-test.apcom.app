@@ -35,8 +35,8 @@
     </main>
 
     <!-- Footer -->
-    <footer class="mt-20 bg-white py-10">
-        <div class="mx-auto max-w-2xl px-6">
+    <footer class="bg-white py-12">
+        <div class="mx-auto max-w-2xl px-6 flex flex-col items-center justify-center gap-5">
 
             {{-- Suisse --}}
             <div class="flex flex-col items-center text-center">
@@ -49,7 +49,7 @@
             </div>
 
             {{-- Liens + copyright --}}
-            <div class="mt-8 flex flex-col items-center gap-3">
+            <div class="flex flex-col items-center gap-2">
                 <div class="flex items-center gap-5 text-sm text-gray-400">
                     <a href="https://bat-id.ch/terms" target="_blank" class="transition hover:text-batid-bleu">{{ __('Conditions générales') }}</a>
                     <span>·</span>
