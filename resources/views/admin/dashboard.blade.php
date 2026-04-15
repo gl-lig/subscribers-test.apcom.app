@@ -57,77 +57,44 @@
             @endphp
             <div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-100 overflow-hidden">
                 {{-- Header du groupe --}}
-                <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4">
-                    <div class="flex items-center gap-3">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-lg {{ $allPassed ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
-                            <i class="fa-solid {{ $meta['icon'] }} text-sm"></i>
-                        </div>
-                        <div>
+                <div class="border-b border-gray-100 px-5 py-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="flex h-7 w-7 items-center justify-center rounded-md {{ $allPassed ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
+                                <i class="fa-solid {{ $meta['icon'] }} text-xs"></i>
+                            </div>
                             <h2 class="text-sm font-bold text-batid-marine">{{ $meta['label'] }}</h2>
-                            <span class="text-xs text-gray-400">{{ $tests->first()->suite }}</span>
                         </div>
-                    </div>
-                    <div class="flex items-center gap-2">
                         <span class="rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $allPassed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                             {{ $groupPassed }}/{{ $groupTotal }}
                         </span>
                     </div>
+                    @if(!empty($meta['desc']))
+                    <p class="mt-1.5 text-xs text-gray-500 leading-relaxed ml-[38px]">{{ $meta['desc'] }}</p>
+                    @endif
                 </div>
 
-                {{-- Tableau --}}
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-gray-50 text-left">
-                            <th class="px-6 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400 w-8"></th>
-                            <th class="px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400">Test</th>
-                            <th class="px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400">Description</th>
-                            <th class="px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400 w-36 text-center">Dernier test</th>
-                            <th class="px-6 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400 w-36 text-center">Prochain test</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-50">
-                        @foreach($tests as $test)
-                        <tr class="hover:bg-gray-50/50 transition {{ $test->status === 'failed' ? 'bg-red-50/30' : '' }}">
-                            <td class="px-6 py-3 text-center">
-                                @if($test->status === 'passed')
-                                    <span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500" title="Passe"></span>
-                                @elseif($test->status === 'failed')
-                                    <span class="inline-block h-2.5 w-2.5 rounded-full bg-red-500" title="Echoue"></span>
-                                @else
-                                    <span class="inline-block h-2.5 w-2.5 rounded-full bg-yellow-400" title="En attente"></span>
-                                @endif
-                            </td>
-                            <td class="px-3 py-3">
-                                <span class="text-xs font-mono text-gray-700">{{ str_replace('test_', '', $test->test_name) }}</span>
-                            </td>
-                            <td class="px-3 py-3">
-                                <span class="text-xs text-gray-500">{{ $test->comment ?? '-' }}</span>
-                                @if($test->status === 'failed' && $test->error_message)
-                                    <div class="mt-1 rounded bg-red-50 px-2 py-1 text-[10px] text-red-600 font-mono truncate max-w-md" title="{{ $test->error_message }}">
-                                        {{ \Illuminate\Support\Str::limit($test->error_message, 120) }}
-                                    </div>
-                                @endif
-                            </td>
-                            <td class="px-3 py-3 text-center">
-                                @if($test->last_run_at)
-                                    <span class="text-xs text-gray-500">{{ $test->last_run_at->format('d.m.Y') }}</span>
-                                    <br><span class="text-[10px] text-gray-400">{{ $test->last_run_at->format('H:i') }}</span>
-                                @else
-                                    <span class="text-xs text-gray-300">—</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-3 text-center">
-                                @if($test->next_run_at)
-                                    <span class="text-xs text-gray-500">{{ $test->next_run_at->format('d.m.Y') }}</span>
-                                    <br><span class="text-[10px] text-gray-400">{{ $test->next_run_at->format('H:i') }}</span>
-                                @else
-                                    <span class="text-xs text-gray-300">—</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                {{-- Lignes compactes --}}
+                <div class="divide-y divide-gray-50">
+                    @foreach($tests as $test)
+                    <div class="flex items-center gap-2 px-5 py-1.5 text-xs {{ $test->status === 'failed' ? 'bg-red-50/40' : 'hover:bg-gray-50/50' }} transition">
+                        @if($test->status === 'passed')
+                            <span class="inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-500"></span>
+                        @elseif($test->status === 'failed')
+                            <span class="inline-block h-2 w-2 flex-shrink-0 rounded-full bg-red-500"></span>
+                        @else
+                            <span class="inline-block h-2 w-2 flex-shrink-0 rounded-full bg-yellow-400"></span>
+                        @endif
+                        <span class="text-gray-500 flex-1 truncate">{{ $test->comment ?? str_replace('test_', '', $test->test_name) }}</span>
+                        @if($test->status === 'failed' && $test->error_message)
+                            <span class="text-[10px] text-red-500 font-mono truncate max-w-[250px]" title="{{ $test->error_message }}">{{ \Illuminate\Support\Str::limit($test->error_message, 60) }}</span>
+                        @endif
+                        @if($test->last_run_at)
+                            <span class="text-[10px] text-gray-400 flex-shrink-0 w-24 text-right">{{ $test->last_run_at->format('d.m.Y H:i') }}</span>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
             </div>
         @endforeach
     </div>
