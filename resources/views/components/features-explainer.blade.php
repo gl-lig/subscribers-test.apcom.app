@@ -91,21 +91,6 @@ $features = [
   class="fe-section"
   x-data="{ active: null }"
 >
-  {{-- INTRO --}}
-  <div class="fe-intro">
-    <p class="fe-eyebrow">
-      <span class="fe-eyebrow__line"></span>
-      {{ __('Fonctionnalités incluses') }}
-      <span class="fe-eyebrow__line"></span>
-    </p>
-    <h2 class="fe-title">
-      {!! __('Ce que chaque fonctionnalité<br>fait concrètement pour vous') !!}
-    </h2>
-    <p class="fe-subtitle">
-      {{ __("Sélectionnez une fonctionnalité pour découvrir ce qu'elle apporte à votre gestion patrimoniale et ce qui est prévu dans chaque formule.") }}
-    </p>
-  </div>
-
   {{-- PILLS --}}
   <nav class="fe-pills" aria-label="{{ __('Fonctionnalités BAT-ID') }}">
     @foreach ($features as $feature)
