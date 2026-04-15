@@ -26,7 +26,7 @@ class AdminProfileController extends Controller
     {
         $request->validate([
             'current_password' => 'required',
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|min:8|confirmed',
         ]);
 
         $admin = Auth::guard('admin')->user();
@@ -35,7 +35,7 @@ class AdminProfileController extends Controller
             return back()->withErrors(['current_password' => 'Mot de passe actuel incorrect.']);
         }
 
-        $admin->update(['password' => $request->password]);
+        $admin->update(['password' => Hash::make($request->password)]);
 
         AdminLogService::log('password_changed', 'profile');
 

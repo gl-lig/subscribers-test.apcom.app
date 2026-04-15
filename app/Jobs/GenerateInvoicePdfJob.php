@@ -14,6 +14,9 @@ class GenerateInvoicePdfJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public int $timeout = 60;
+    public int $tries = 3;
+
     public function __construct(public Order $order) {}
 
     public function handle(InvoiceService $invoiceService): void

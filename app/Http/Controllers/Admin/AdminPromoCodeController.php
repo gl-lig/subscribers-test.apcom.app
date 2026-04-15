@@ -65,8 +65,8 @@ class AdminPromoCodeController extends Controller
             'valid_until' => 'nullable|date|after:valid_from',
             'usage_limit_per_user' => 'required|integer|min:1',
             'scope' => 'required|in:all,specific_user,group',
-            'bat_id_specific' => 'nullable|string',
-            'user_group_id' => 'nullable|exists:user_groups,id',
+            'bat_id_specific' => 'nullable|required_if:scope,specific_user|string',
+            'user_group_id' => 'nullable|required_if:scope,group|exists:user_groups,id',
             'is_active' => 'boolean',
         ]);
 

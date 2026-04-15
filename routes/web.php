@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::get('/', PricingPage::class)->name('home');
-Route::get('/deeplink', [DeeplinkController::class, 'handle'])->name('deeplink');
-Route::get('/api/register', [ApiRegisterController::class, 'handle'])->name('api.register');
+Route::get('/deeplink', [DeeplinkController::class, 'handle'])->middleware('throttle:30,1')->name('deeplink');
+Route::get('/api/register', [ApiRegisterController::class, 'handle'])->middleware('throttle:10,1')->name('api.register');
 Route::get('/cart', Cart::class)->name('cart');
 Route::get('/confirmation', PaymentConfirmation::class)->name('confirmation');
 Route::get('/payment-failed', PaymentFailed::class)->name('payment.failed');
@@ -31,7 +31,7 @@ Route::get('/locale/{locale}', function (string $locale) {
 Route::get('/invoice/{token}', [InvoiceController::class, 'show'])->name('invoice.show');
 
 // Public API — default subscription type
-Route::get('/api/default-subscription', function () {
+Route::middleware('throttle:60,1')->get('/api/default-subscription', function () {
     $type = \App\Models\SubscriptionType::where('is_default', true)
         ->with('translations')
         ->first();

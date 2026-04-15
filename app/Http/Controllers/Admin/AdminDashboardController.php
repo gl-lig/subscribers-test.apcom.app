@@ -27,11 +27,19 @@ class AdminDashboardController extends Controller
             'PublicRoutes' => ['label' => 'Routes publiques', 'icon' => 'fa-globe'],
         ];
 
-        $totalPassed = TestResult::where('status', 'passed')->count();
-        $totalFailed = TestResult::where('status', 'failed')->count();
-        $totalPending = TestResult::where('status', 'pending')->count();
-        $total = $totalPassed + $totalFailed + $totalPending;
-        $lastRun = TestResult::max('last_run_at');
+        $counts = TestResult::selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'passed' THEN 1 ELSE 0 END) as passed,
+            SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed,
+            SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+            MAX(last_run_at) as last_run
+        ")->first();
+
+        $total = (int) $counts->total;
+        $totalPassed = (int) $counts->passed;
+        $totalFailed = (int) $counts->failed;
+        $totalPending = (int) $counts->pending;
+        $lastRun = $counts->last_run;
 
         return view('admin.dashboard', compact(
             'results', 'groupLabels',
@@ -41,6 +49,10 @@ class AdminDashboardController extends Controller
 
     public function runTests()
     {
+        if (! auth()->guard('admin')->user()?->isSuper()) {
+            abort(403);
+        }
+
         \Artisan::call('tests:run');
         $output = \Artisan::output();
 

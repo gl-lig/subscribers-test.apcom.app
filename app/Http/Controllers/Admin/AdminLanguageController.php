@@ -49,6 +49,12 @@ class AdminLanguageController extends Controller
 
     public function updateTranslation(Request $request)
     {
+        $request->validate([
+            'locale' => 'required|string|in:' . implode(',', config('app.available_locales', ['fr', 'de', 'it', 'en'])),
+            'key' => 'required|string|max:255',
+            'value' => 'nullable|string',
+        ]);
+
         $locale = $request->input('locale');
         $key = $request->input('key');
         $value = $request->input('value');

@@ -14,6 +14,9 @@ class CheckExpiredSubscriptionsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public int $timeout = 120;
+    public int $tries = 1;
+
     public function handle(): void
     {
         $orders = Order::where('status', 'active')

@@ -12,11 +12,13 @@ class AdminUserGroupController extends Controller
 {
     public function index()
     {
-        $groups = UserGroup::withCount([
-            'promoCodes',
-        ])->get()->map(function ($group) {
-            $group->member_count = DB::table('user_group_members')->where('group_id', $group->id)->count();
-            return $group;
+        $memberCounts = DB::table('user_group_members')
+            ->selectRaw('group_id, COUNT(*) as count')
+            ->groupBy('group_id')
+            ->pluck('count', 'group_id');
+
+        $groups = UserGroup::withCount('promoCodes')->get()->each(function ($group) use ($memberCounts) {
+            $group->member_count = $memberCounts[$group->id] ?? 0;
         });
 
         return view('admin.user-groups.index', compact('groups'));

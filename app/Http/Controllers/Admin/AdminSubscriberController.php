@@ -38,7 +38,7 @@ class AdminSubscriberController extends Controller
     {
         $data = ['bat_id' => $subscriber->bat_id, 'phone' => $subscriber->phone];
 
-        // Delete related data
+        $subscriber->load('orders.metadata', 'orders.paymentLogs');
         foreach ($subscriber->orders as $order) {
             $order->metadata()->delete();
             $order->paymentLogs()->delete();
