@@ -23,8 +23,8 @@
                 <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($group->description, 60) }}</td>
                 <td class="px-6 py-4 text-sm">{{ $group->member_count }}</td>
                 <td class="px-6 py-4 text-right space-x-2">
-                    <a href="{{ route('admin.user-groups.edit', $group) }}" class="text-sm text-batid-bleu hover:underline">Modifier</a>
-                    <form method="POST" action="{{ route('admin.user-groups.destroy', $group) }}" class="inline" onsubmit="return confirm('Supprimer ?')">@csrf @method('DELETE')<button class="text-sm text-red-600 hover:underline">Supprimer</button></form>
+                    <a href="{{ route('admin.user-groups.edit', $group) }}" class="text-batid-bleu hover:text-batid-marine" title="Modifier"><i class="fa-solid fa-pen"></i></a>
+                    <form method="POST" action="{{ route('admin.user-groups.destroy', $group) }}" class="inline" onsubmit="return confirm('Supprimer ?')">@csrf @method('DELETE')<button class="text-red-500 hover:text-red-700" title="Supprimer"><i class="fa-solid fa-trash"></i></button></form>
                 </td>
             </tr>
             @empty

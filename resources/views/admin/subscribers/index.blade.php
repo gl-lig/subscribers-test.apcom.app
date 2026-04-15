@@ -42,10 +42,10 @@
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-500">{{ $subscriber->created_at->format('d.m.Y') }}</td>
                 <td class="px-6 py-4 text-right flex items-center justify-end gap-3">
-                    <a href="{{ route('admin.subscribers.show', $subscriber) }}" class="text-sm font-medium text-batid-bleu hover:underline">Voir</a>
+                    <a href="{{ route('admin.subscribers.show', $subscriber) }}" class="text-batid-bleu hover:text-batid-marine" title="Voir"><i class="fa-solid fa-eye"></i></a>
                     <form method="POST" action="{{ route('admin.subscribers.destroy', $subscriber) }}" onsubmit="return confirm('Supprimer {{ $subscriber->bat_id }} et toutes ses commandes ?')" class="inline">
                         @csrf @method('DELETE')
-                        <button type="submit" class="text-sm text-red-600 hover:underline">Supprimer</button>
+                        <button type="submit" class="text-red-500 hover:text-red-700" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
                     </form>
                 </td>
             </tr>

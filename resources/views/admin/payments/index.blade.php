@@ -37,7 +37,7 @@
                     @else<span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">{{ $log->event }}</span>@endif
                 </td>
                 <td class="px-4 py-3 text-sm text-gray-500">{{ $log->received_at?->format('d.m.Y H:i:s') }}</td>
-                <td class="px-4 py-3 text-right"><a href="{{ route('admin.payments.show', $log) }}" class="text-sm text-batid-bleu hover:underline">Détail</a></td>
+                <td class="px-4 py-3 text-right"><a href="{{ route('admin.payments.show', $log) }}" class="text-batid-bleu hover:text-batid-marine" title="Détail"><i class="fa-solid fa-eye"></i></a></td>
             </tr>
             @empty
             <tr><td colspan="5" class="px-4 py-8 text-center text-sm text-gray-400">Aucun paiement.</td></tr>

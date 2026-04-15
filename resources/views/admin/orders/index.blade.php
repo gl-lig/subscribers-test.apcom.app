@@ -57,10 +57,10 @@
                 </td>
                 <td class="px-4 py-3 text-xs text-gray-500">{{ $order->starts_at->format('d.m.Y') }} → {{ $order->expires_at->format('d.m.Y') }}</td>
                 <td class="px-4 py-3 text-right flex items-center justify-end gap-3">
-                    <a href="{{ route('admin.orders.show', $order) }}" class="text-sm text-batid-bleu hover:underline">Voir</a>
+                    <a href="{{ route('admin.orders.show', $order) }}" class="text-batid-bleu hover:text-batid-marine" title="Voir"><i class="fa-solid fa-eye"></i></a>
                     <form method="POST" action="{{ route('admin.orders.destroy', $order) }}" onsubmit="return confirm('Supprimer la commande {{ $order->order_number }} ?')">
                         @csrf @method('DELETE')
-                        <button type="submit" class="text-sm text-red-500 hover:text-red-700 hover:underline">Supprimer</button>
+                        <button type="submit" class="text-red-500 hover:text-red-700" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
                     </form>
                 </td>
             </tr>

@@ -32,7 +32,7 @@
                     @else<span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Inactif</span>@endif
                 </td>
                 <td class="px-4 py-3 text-right">
-                    <a href="{{ route('admin.promo-codes.edit', $promo) }}" class="text-sm text-batid-bleu hover:underline">Modifier</a>
+                    <a href="{{ route('admin.promo-codes.edit', $promo) }}" class="text-batid-bleu hover:text-batid-marine" title="Modifier"><i class="fa-solid fa-pen"></i></a>
                 </td>
             </tr>
             @empty

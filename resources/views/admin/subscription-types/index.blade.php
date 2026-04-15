@@ -31,10 +31,10 @@
             @else
                 <span class="inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">Inactif</span>
             @endif
-            <a href="{{ route('admin.subscription-types.edit', $type) }}" class="text-sm text-batid-bleu hover:underline">Modifier</a>
+            <a href="{{ route('admin.subscription-types.edit', $type) }}" class="text-batid-bleu hover:text-batid-marine" title="Modifier"><i class="fa-solid fa-pen"></i></a>
             <form method="POST" action="{{ route('admin.subscription-types.destroy', $type) }}" onsubmit="return confirm('Confirmer la suppression ?')">
                 @csrf @method('DELETE')
-                <button type="submit" class="text-sm text-red-600 hover:underline">Supprimer</button>
+                <button type="submit" class="text-red-500 hover:text-red-700" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
             </form>
         </div>
     </div>

@@ -29,7 +29,7 @@
                     @else<span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Inactif</span>@endif
                 </td>
                 <td class="px-4 py-3 text-sm text-gray-500">{{ $admin->last_login_at?->format('d.m.Y H:i') ?? 'Jamais' }}</td>
-                <td class="px-4 py-3 text-right"><a href="{{ route('admin.admins.edit', $admin) }}" class="text-sm text-batid-bleu hover:underline">Modifier</a></td>
+                <td class="px-4 py-3 text-right"><a href="{{ route('admin.admins.edit', $admin) }}" class="text-batid-bleu hover:text-batid-marine" title="Modifier"><i class="fa-solid fa-pen"></i></a></td>
             </tr>
             @endforeach
         </tbody>

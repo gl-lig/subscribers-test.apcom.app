@@ -5,7 +5,7 @@
     <a href="{{ route('admin.subscribers.index') }}" class="text-sm text-batid-bleu hover:underline">&larr; Retour aux abonnés</a>
     <form method="POST" action="{{ route('admin.subscribers.destroy', $subscriber) }}" onsubmit="return confirm('Supprimer cet abonné et toutes ses commandes ? Cette action est irréversible.')">
         @csrf @method('DELETE')
-        <button type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700">Supprimer l'abonné</button>
+        <button type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700"><i class="fa-solid fa-trash mr-1"></i> Supprimer</button>
     </form>
 </div>
 
@@ -50,7 +50,7 @@
                 </td>
                 <td class="px-4 py-3 text-xs text-gray-500">{{ $order->starts_at->format('d.m.Y') }} → {{ $order->expires_at->format('d.m.Y') }}</td>
                 <td class="px-4 py-3 text-right">
-                    <a href="{{ route('admin.orders.show', $order) }}" class="text-sm text-batid-bleu hover:underline">Détail</a>
+                    <a href="{{ route('admin.orders.show', $order) }}" class="text-batid-bleu hover:text-batid-marine" title="Détail"><i class="fa-solid fa-eye"></i></a>
                 </td>
             </tr>
             @endforeach

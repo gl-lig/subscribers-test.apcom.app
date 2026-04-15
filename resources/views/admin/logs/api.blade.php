@@ -52,7 +52,7 @@
                 <td class="px-4 py-3 text-right">
                     @if($log->status !== 'success')
                     <form method="POST" action="{{ route('admin.logs.api.replay', $log) }}" class="inline">@csrf
-                        <button type="submit" class="text-sm text-yellow-600 hover:underline">Rejouer</button>
+                        <button type="submit" class="text-yellow-600 hover:text-yellow-800" title="Rejouer"><i class="fa-solid fa-rotate-right"></i></button>
                     </form>
                     @endif
                 </td>

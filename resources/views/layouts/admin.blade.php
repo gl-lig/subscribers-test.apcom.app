@@ -92,7 +92,7 @@
                     <span class="text-sm text-gray-600">{{ auth()->guard('admin')->user()->full_name ?? '' }}</span>
                     <form method="POST" action="{{ route('admin.logout') }}">
                         @csrf
-                        <button type="submit" class="text-sm text-red-600 hover:underline">Déconnexion</button>
+                        <button type="submit" class="text-sm text-red-600 hover:text-red-800" title="Déconnexion"><i class="fa-solid fa-right-from-bracket"></i></button>
                     </form>
                 </div>
             </header>

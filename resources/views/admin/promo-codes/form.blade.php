@@ -39,7 +39,7 @@
 
     <div class="flex justify-end gap-3">
         @if($promoCode)
-        <form method="POST" action="{{ route('admin.promo-codes.destroy', $promoCode) }}" onsubmit="return confirm('Supprimer ce code ?')">@csrf @method('DELETE')<button type="submit" class="rounded-lg bg-red-100 px-4 py-2 text-sm text-red-700 hover:bg-red-200">Supprimer</button></form>
+        <form method="POST" action="{{ route('admin.promo-codes.destroy', $promoCode) }}" onsubmit="return confirm('Supprimer ce code ?')">@csrf @method('DELETE')<button type="submit" class="rounded-lg bg-red-100 px-4 py-2 text-sm text-red-700 hover:bg-red-200"><i class="fa-solid fa-trash mr-1"></i> Supprimer</button></form>
         @endif
         <button type="submit" class="rounded-lg bg-batid-bleu px-6 py-3 text-sm font-semibold text-white hover:bg-batid-marine">{{ $promoCode ? 'Mettre à jour' : 'Créer' }}</button>
     </div>
