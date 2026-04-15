@@ -174,6 +174,9 @@
         <button @click="tab = 'webhook'" :class="tab === 'webhook' ? 'border-batid-bleu text-batid-bleu' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="border-b-2 px-6 py-3 text-sm font-semibold transition">
             Webhook sortant
         </button>
+        <button @click="tab = 'default'" :class="tab === 'default' ? 'border-batid-bleu text-batid-bleu' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="border-b-2 px-6 py-3 text-sm font-semibold transition">
+            Abo par defaut
+        </button>
     </div>
 
     {{-- ========== TAB PROCESSUS ========== --}}
@@ -879,6 +882,113 @@ echo json_encode(['status' => 'success', 'message' => 'Webhook traite']);</pre>
                 <li>L'endpoint bat-id doit toujours verifier la signature avant de traiter l'evenement</li>
                 <li>Les evenements sont journalises dans le BO (Journal API) avec possibilite de rejouer</li>
             </ul>
+        </div>
+
+    </div>
+
+    {{-- ========== TAB 5 : ABONNEMENT PAR DEFAUT ========== --}}
+    <div x-show="tab === 'default'" x-cloak>
+
+        {{-- Principe --}}
+        <div class="mb-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
+            <h2 class="mb-3 text-lg font-semibold text-batid-marine">Abonnement par defaut</h2>
+            <p class="mb-3 text-sm text-gray-700">Cette API publique permet aux applications tierces (app mobile bat-id, site web, partenaires) de recuperer automatiquement les informations du <strong>type d'abonnement par defaut</strong> configure dans le back-office.</p>
+            <p class="mb-3 text-sm text-gray-700">L'objectif est de permettre a tout logiciel connecte a bat-id de savoir quel abonnement proposer par defaut a ses utilisateurs, sans avoir a le coder en dur.</p>
+            <div class="rounded-lg bg-amber-50 p-4 ring-1 ring-amber-200">
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
+                    <p class="text-sm text-amber-800">Le type par defaut se configure dans <strong>Types d'abonnement</strong> en cliquant sur l'etoile <i class="fa-solid fa-star text-batid-bleu text-xs"></i> du type souhaite. Un seul type peut etre par defaut a la fois.</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Endpoint --}}
+        <div class="mb-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
+            <h2 class="mb-3 text-lg font-semibold text-batid-marine">Endpoint</h2>
+            <div class="rounded-lg bg-gray-900 p-4 mb-4">
+                <code class="text-sm text-green-400">GET {{ $baseUrl }}/api/default-subscription</code>
+            </div>
+            <ul class="ml-4 list-disc space-y-1 text-sm text-gray-700">
+                <li><strong>Methode</strong> : GET</li>
+                <li><strong>Authentification</strong> : aucune (endpoint public)</li>
+                <li><strong>Format de reponse</strong> : JSON</li>
+            </ul>
+        </div>
+
+        {{-- URL a copier --}}
+        <div class="mb-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
+            <h2 class="mb-3 text-lg font-semibold text-batid-marine">URL a integrer</h2>
+            <p class="mb-3 text-sm text-gray-500">Copiez cette URL pour l'utiliser dans vos applications :</p>
+            <div x-data="{ copied: false }">
+                <div class="flex items-center gap-2 rounded-lg bg-gray-900 p-3 cursor-pointer group"
+                     @click="navigator.clipboard.writeText('{{ $baseUrl }}/api/default-subscription'); copied = true; setTimeout(() => copied = false, 2000)">
+                    <div class="flex-1 min-w-0">
+                        <code class="text-sm text-green-400">{{ $baseUrl }}/api/default-subscription</code>
+                    </div>
+                    <span x-show="!copied" class="flex-shrink-0 text-gray-400 group-hover:text-white transition">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    </span>
+                    <span x-show="copied" x-cloak class="flex-shrink-0 text-sm font-medium text-green-400">Copie !</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Reponse --}}
+        <div class="mb-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
+            <h2 class="mb-3 text-lg font-semibold text-batid-marine">Reponse JSON (200)</h2>
+            <div class="rounded-lg bg-gray-900 p-4 mb-4">
+<pre class="text-sm text-green-400">{
+  "id": 2,
+  "status": "online",
+  "price_chf": 149.00,
+  "is_free": false,
+  "discount_24_months": 10.00,
+  "discount_36_months": 15.00,
+  "parcelles_count": 10,
+  "parcelles_unlimited": false,
+  "alertes_count": 5,
+  "stockage_go": 20,
+  "stockage_unlimited": false,
+  "cloud_externe": true,
+  "lot_sauvegarde": true,
+  "veille_robotisee": true,
+  "veille_count": 3,
+  "veille_unlimited": false,
+  "workspace_enabled": true,
+  "workspace_count": 5,
+  "workspace_unlimited": false,
+  "translations": {
+    "fr": { "name": "Premium", "description": "..." },
+    "de": { "name": "Premium", "description": "..." },
+    "it": { "name": "Premium", "description": "..." },
+    "en": { "name": "Premium", "description": "..." }
+  }
+}</pre>
+            </div>
+        </div>
+
+        {{-- Erreur --}}
+        <div class="mb-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
+            <h2 class="mb-3 text-lg font-semibold text-batid-marine">Erreur (404)</h2>
+            <p class="mb-3 text-sm text-gray-700">Si aucun type par defaut n'est configure :</p>
+            <div class="rounded-lg bg-gray-900 p-4">
+<pre class="text-sm text-red-400">{
+  "error": "no_default_configured"
+}</pre>
+            </div>
+        </div>
+
+        {{-- Integration --}}
+        <div class="mb-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
+            <h2 class="mb-3 text-lg font-semibold text-batid-marine">Exemple d'integration</h2>
+            <div class="rounded-lg bg-gray-900 p-4">
+<pre class="text-sm text-green-400">// JavaScript
+const response = await fetch('{{ $baseUrl }}/api/default-subscription');
+const subscription = await response.json();
+
+console.log(subscription.translations.fr.name); // "Premium"
+console.log(subscription.price_chf);            // 149.00</pre>
+            </div>
         </div>
 
     </div>

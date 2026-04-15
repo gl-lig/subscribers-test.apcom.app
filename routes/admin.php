@@ -59,6 +59,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // Subscription types
             Route::resource('subscription-types', AdminSubscriptionTypeController::class)->except(['show']);
             Route::post('/subscription-types/reorder', [AdminSubscriptionTypeController::class, 'reorder'])->name('subscription-types.reorder');
+            Route::post('/subscription-types/{subscription_type}/set-default', [AdminSubscriptionTypeController::class, 'setDefault'])->name('subscription-types.set-default');
 
             // Orders
             Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');

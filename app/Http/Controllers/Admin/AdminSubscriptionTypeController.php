@@ -138,4 +138,18 @@ class AdminSubscriptionTypeController extends Controller
 
         return response()->json(['status' => 'ok']);
     }
+
+    public function setDefault(SubscriptionType $subscriptionType)
+    {
+        SubscriptionType::where('is_default', true)->update(['is_default' => false]);
+        $subscriptionType->update(['is_default' => true]);
+
+        AdminLogService::log('update', 'subscription_types', null, [
+            'action' => 'set_default',
+            'type_id' => $subscriptionType->id,
+        ]);
+
+        return redirect()->route('admin.subscription-types.index')
+            ->with('success', 'Type par défaut défini : ' . ($subscriptionType->translation('fr')?->name ?? '-'));
+    }
 }

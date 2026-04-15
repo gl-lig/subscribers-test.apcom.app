@@ -24,6 +24,9 @@
             </div>
         </div>
         <div class="flex items-center gap-3">
+            @if($type->is_default)
+                <span class="inline-flex rounded-full bg-batid-bleu/10 px-2.5 py-0.5 text-xs font-medium text-batid-bleu"><i class="fa-solid fa-star mr-1"></i>Par défaut</span>
+            @endif
             @if($type->status === 'online')
                 <span class="inline-flex rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">En ligne</span>
             @elseif($type->status === 'admin_only')
@@ -31,6 +34,10 @@
             @else
                 <span class="inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">Inactif</span>
             @endif
+            <form method="POST" action="{{ route('admin.subscription-types.set-default', $type) }}" title="Définir par défaut">
+                @csrf
+                <button type="submit" class="{{ $type->is_default ? 'text-batid-bleu' : 'text-gray-300 hover:text-batid-bleu' }} transition"><i class="fa-solid fa-star"></i></button>
+            </form>
             <a href="{{ route('admin.subscription-types.edit', $type) }}" class="text-batid-bleu hover:text-batid-marine" title="Modifier"><i class="fa-solid fa-pen"></i></a>
             <form method="POST" action="{{ route('admin.subscription-types.destroy', $type) }}" onsubmit="return confirm('Confirmer la suppression ?')">
                 @csrf @method('DELETE')
