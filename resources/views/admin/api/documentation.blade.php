@@ -5,105 +5,166 @@
     <p class="mb-6 text-sm text-gray-500">Documentation technique pour l'integration depuis l'application mobile bat-id</p>
 
     {{-- Schema du processus --}}
-    <div class="mb-8 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-        <h2 class="mb-5 text-lg font-semibold text-batid-marine">Vue d'ensemble du processus</h2>
-        <div class="flex flex-col gap-0">
+    <div class="mb-8 rounded-xl bg-white p-8 shadow-sm ring-1 ring-gray-100">
+        <h2 class="mb-2 text-lg font-semibold text-batid-marine">Vue d'ensemble du processus</h2>
+        <p class="mb-8 text-sm text-gray-500">Les 3 interactions entre bat-id et subscribers</p>
 
-            {{-- Etape 1 --}}
-            <div class="flex items-start gap-4">
-                <div class="flex flex-col items-center">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-batid-bleu text-white text-sm font-bold">1</div>
-                    <div class="h-12 w-0.5 bg-gray-200"></div>
+        {{-- Etape 1 : Inscription --}}
+        <div class="rounded-xl bg-blue-50 p-5 ring-1 ring-blue-200">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold">1</div>
+                <span class="text-sm font-bold text-blue-800">INSCRIPTION</span>
+                <span class="rounded bg-blue-200 px-2 py-0.5 text-[10px] font-semibold text-blue-700">API 2 — Onglet Inscription</span>
+            </div>
+            <div class="flex items-center justify-center gap-6">
+                <div class="rounded-xl bg-white px-5 py-4 shadow-sm ring-1 ring-blue-200 text-center min-w-[100px]">
+                    <i class="fa-solid fa-mobile-screen text-2xl text-gray-600 mb-2"></i>
+                    <p class="text-xs font-bold text-gray-700">Backend</p>
+                    <p class="text-xs font-bold text-gray-700">bat-id</p>
                 </div>
-                <div class="flex-1 pb-6">
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="rounded-lg bg-blue-100 px-2.5 py-1 text-xs font-bold text-blue-800">INSCRIPTION</span>
-                        <span class="text-xs text-gray-400">API 2</span>
+                <div class="flex flex-col items-center gap-1">
+                    <div class="flex items-center gap-2">
+                        <div class="h-px w-8 bg-blue-400"></div>
+                        <i class="fa-solid fa-arrow-right text-blue-600 text-lg"></i>
+                        <div class="h-px w-8 bg-blue-400"></div>
                     </div>
-                    <div class="flex items-center gap-3 text-sm">
-                        <div class="rounded-lg bg-gray-50 px-3 py-2 ring-1 ring-gray-200 text-center">
-                            <i class="fa-solid fa-mobile-screen text-lg text-gray-600 mb-1"></i>
-                            <p class="text-xs font-semibold text-gray-700">bat-id</p>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <i class="fa-solid fa-arrow-right text-batid-bleu"></i>
-                            <span class="text-[10px] text-gray-400 mt-0.5">token signe</span>
-                        </div>
-                        <div class="rounded-lg bg-gray-50 px-3 py-2 ring-1 ring-gray-200 text-center">
-                            <i class="fa-solid fa-server text-lg text-batid-bleu mb-1"></i>
-                            <p class="text-xs font-semibold text-gray-700">subscribers</p>
-                        </div>
+                    <span class="rounded bg-white px-2 py-0.5 text-[10px] font-semibold text-blue-600 ring-1 ring-blue-200">token signe</span>
+                </div>
+                <div class="rounded-xl bg-white px-5 py-4 shadow-sm ring-1 ring-blue-200 text-center min-w-[100px]">
+                    <i class="fa-solid fa-server text-2xl text-batid-bleu mb-2"></i>
+                    <p class="text-xs font-bold text-gray-700">Subscribers</p>
+                    <p class="text-xs font-bold text-gray-700">bat-i.ch</p>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                    <div class="flex items-center gap-2">
+                        <div class="h-px w-8 bg-blue-400"></div>
+                        <i class="fa-solid fa-arrow-right text-blue-600 text-lg"></i>
+                        <div class="h-px w-8 bg-blue-400"></div>
                     </div>
-                    <p class="mt-2 text-xs text-gray-500">A chaque creation de compte chez bat-id, le backend bat-id appelle l'API Inscription pour creer l'abonne dans notre systeme.</p>
+                    <span class="rounded bg-white px-2 py-0.5 text-[10px] font-semibold text-green-600 ring-1 ring-green-200">JSON 201</span>
+                </div>
+                <div class="rounded-xl bg-green-50 px-5 py-4 shadow-sm ring-1 ring-green-200 text-center min-w-[100px]">
+                    <i class="fa-solid fa-user-check text-2xl text-green-600 mb-2"></i>
+                    <p class="text-xs font-bold text-gray-700">Abonne</p>
+                    <p class="text-xs font-bold text-gray-700">cree</p>
                 </div>
             </div>
-
-            {{-- Etape 2 --}}
-            <div class="flex items-start gap-4">
-                <div class="flex flex-col items-center">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-batid-bleu text-white text-sm font-bold">2</div>
-                    <div class="h-12 w-0.5 bg-gray-200"></div>
-                </div>
-                <div class="flex-1 pb-6">
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="rounded-lg bg-green-100 px-2.5 py-1 text-xs font-bold text-green-800">DEEPLINK</span>
-                        <span class="text-xs text-gray-400">API 1</span>
-                    </div>
-                    <div class="flex items-center gap-3 text-sm">
-                        <div class="rounded-lg bg-gray-50 px-3 py-2 ring-1 ring-gray-200 text-center">
-                            <i class="fa-solid fa-user text-lg text-gray-600 mb-1"></i>
-                            <p class="text-xs font-semibold text-gray-700">utilisateur</p>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <i class="fa-solid fa-arrow-right text-green-600"></i>
-                            <span class="text-[10px] text-gray-400 mt-0.5">clic bouton</span>
-                        </div>
-                        <div class="rounded-lg bg-gray-50 px-3 py-2 ring-1 ring-gray-200 text-center">
-                            <i class="fa-solid fa-cart-shopping text-lg text-green-600 mb-1"></i>
-                            <p class="text-xs font-semibold text-gray-700">panier</p>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <i class="fa-solid fa-arrow-right text-green-600"></i>
-                            <span class="text-[10px] text-gray-400 mt-0.5">paiement</span>
-                        </div>
-                        <div class="rounded-lg bg-gray-50 px-3 py-2 ring-1 ring-gray-200 text-center">
-                            <i class="fa-solid fa-circle-check text-lg text-green-600 mb-1"></i>
-                            <p class="text-xs font-semibold text-gray-700">commande</p>
-                        </div>
-                    </div>
-                    <p class="mt-2 text-xs text-gray-500">L'utilisateur bat-id clique sur un bouton dans l'app. Le lien signe l'amene directement au panier subscribers avec l'abonnement pre-selectionne. Il n'a plus qu'a payer.</p>
-                </div>
-            </div>
-
-            {{-- Etape 3 --}}
-            <div class="flex items-start gap-4">
-                <div class="flex flex-col items-center">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-batid-bleu text-white text-sm font-bold">3</div>
-                </div>
-                <div class="flex-1">
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="rounded-lg bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-800">WEBHOOK</span>
-                        <span class="text-xs text-gray-400">API 3</span>
-                    </div>
-                    <div class="flex items-center gap-3 text-sm">
-                        <div class="rounded-lg bg-gray-50 px-3 py-2 ring-1 ring-gray-200 text-center">
-                            <i class="fa-solid fa-server text-lg text-batid-bleu mb-1"></i>
-                            <p class="text-xs font-semibold text-gray-700">subscribers</p>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <i class="fa-solid fa-arrow-right text-amber-600"></i>
-                            <span class="text-[10px] text-gray-400 mt-0.5">token signe</span>
-                        </div>
-                        <div class="rounded-lg bg-gray-50 px-3 py-2 ring-1 ring-gray-200 text-center">
-                            <i class="fa-solid fa-mobile-screen text-lg text-gray-600 mb-1"></i>
-                            <p class="text-xs font-semibold text-gray-700">bat-id</p>
-                        </div>
-                    </div>
-                    <p class="mt-2 text-xs text-gray-500">Une fois la commande validee, subscribers notifie automatiquement bat-id avec toutes les informations de l'abonnement (type, features, facture PDF, dates).</p>
-                </div>
-            </div>
-
+            <p class="mt-4 text-xs text-gray-600 text-center">A chaque creation de compte dans l'app bat-id, le backend appelle notre API pour creer l'abonne correspondant.</p>
         </div>
+
+        {{-- Separateur --}}
+        <div class="flex justify-center py-4">
+            <div class="flex flex-col items-center">
+                <div class="h-6 w-px bg-gray-300"></div>
+                <i class="fa-solid fa-chevron-down text-gray-300 text-xs"></i>
+            </div>
+        </div>
+
+        {{-- Etape 2 : Deeplink --}}
+        <div class="rounded-xl bg-green-50 p-5 ring-1 ring-green-200">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-600 text-white text-xs font-bold">2</div>
+                <span class="text-sm font-bold text-green-800">COMMANDE VIA DEEPLINK</span>
+                <span class="rounded bg-green-200 px-2 py-0.5 text-[10px] font-semibold text-green-700">API 1 — Onglet Deeplink</span>
+            </div>
+            <div class="flex items-center justify-center gap-5">
+                <div class="rounded-xl bg-white px-5 py-4 shadow-sm ring-1 ring-green-200 text-center min-w-[100px]">
+                    <i class="fa-solid fa-user text-2xl text-gray-600 mb-2"></i>
+                    <p class="text-xs font-bold text-gray-700">Utilisateur</p>
+                    <p class="text-xs font-bold text-gray-700">bat-id</p>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                    <div class="flex items-center gap-1">
+                        <div class="h-px w-6 bg-green-400"></div>
+                        <i class="fa-solid fa-arrow-right text-green-600"></i>
+                        <div class="h-px w-6 bg-green-400"></div>
+                    </div>
+                    <span class="text-[10px] text-green-600 font-semibold">clic bouton</span>
+                </div>
+                <div class="rounded-xl bg-white px-5 py-4 shadow-sm ring-1 ring-green-200 text-center min-w-[100px]">
+                    <i class="fa-solid fa-cart-shopping text-2xl text-green-600 mb-2"></i>
+                    <p class="text-xs font-bold text-gray-700">Panier</p>
+                    <p class="text-xs font-bold text-gray-700">subscribers</p>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                    <div class="flex items-center gap-1">
+                        <div class="h-px w-6 bg-green-400"></div>
+                        <i class="fa-solid fa-arrow-right text-green-600"></i>
+                        <div class="h-px w-6 bg-green-400"></div>
+                    </div>
+                    <span class="text-[10px] text-green-600 font-semibold">Datatrans</span>
+                </div>
+                <div class="rounded-xl bg-white px-5 py-4 shadow-sm ring-1 ring-green-200 text-center min-w-[100px]">
+                    <i class="fa-solid fa-credit-card text-2xl text-green-600 mb-2"></i>
+                    <p class="text-xs font-bold text-gray-700">Paiement</p>
+                    <p class="text-xs font-bold text-gray-700">securise</p>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                    <div class="flex items-center gap-1">
+                        <div class="h-px w-6 bg-green-400"></div>
+                        <i class="fa-solid fa-arrow-right text-green-600"></i>
+                        <div class="h-px w-6 bg-green-400"></div>
+                    </div>
+                    <span class="text-[10px] text-green-600 font-semibold">valide</span>
+                </div>
+                <div class="rounded-xl bg-green-100 px-5 py-4 shadow-sm ring-1 ring-green-300 text-center min-w-[100px]">
+                    <i class="fa-solid fa-circle-check text-2xl text-green-700 mb-2"></i>
+                    <p class="text-xs font-bold text-green-800">Commande</p>
+                    <p class="text-xs font-bold text-green-800">confirmee</p>
+                </div>
+            </div>
+            <p class="mt-4 text-xs text-gray-600 text-center">L'utilisateur clique sur un bouton dans l'app bat-id. L'URL signee l'amene directement au panier avec l'abonnement pre-selectionne. Il paie et la commande est validee.</p>
+        </div>
+
+        {{-- Separateur --}}
+        <div class="flex justify-center py-4">
+            <div class="flex flex-col items-center">
+                <div class="h-6 w-px bg-gray-300"></div>
+                <i class="fa-solid fa-chevron-down text-gray-300 text-xs"></i>
+            </div>
+        </div>
+
+        {{-- Etape 3 : Webhook --}}
+        <div class="rounded-xl bg-amber-50 p-5 ring-1 ring-amber-200">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-amber-600 text-white text-xs font-bold">3</div>
+                <span class="text-sm font-bold text-amber-800">NOTIFICATION WEBHOOK</span>
+                <span class="rounded bg-amber-200 px-2 py-0.5 text-[10px] font-semibold text-amber-700">API 3 — Onglet Webhook sortant</span>
+            </div>
+            <div class="flex items-center justify-center gap-6">
+                <div class="rounded-xl bg-white px-5 py-4 shadow-sm ring-1 ring-amber-200 text-center min-w-[100px]">
+                    <i class="fa-solid fa-server text-2xl text-batid-bleu mb-2"></i>
+                    <p class="text-xs font-bold text-gray-700">Subscribers</p>
+                    <p class="text-xs font-bold text-gray-700">bat-i.ch</p>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                    <div class="flex items-center gap-2">
+                        <div class="h-px w-8 bg-amber-400"></div>
+                        <i class="fa-solid fa-arrow-right text-amber-600 text-lg"></i>
+                        <div class="h-px w-8 bg-amber-400"></div>
+                    </div>
+                    <span class="rounded bg-white px-2 py-0.5 text-[10px] font-semibold text-amber-600 ring-1 ring-amber-200">token signe</span>
+                </div>
+                <div class="rounded-xl bg-white px-5 py-4 shadow-sm ring-1 ring-amber-200 text-center min-w-[100px]">
+                    <i class="fa-solid fa-mobile-screen text-2xl text-gray-600 mb-2"></i>
+                    <p class="text-xs font-bold text-gray-700">Backend</p>
+                    <p class="text-xs font-bold text-gray-700">bat-id</p>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-center">
+                <div class="rounded-lg bg-white px-4 py-2 ring-1 ring-amber-200 text-center">
+                    <p class="text-[10px] font-semibold text-gray-500 mb-1">Informations transmises</p>
+                    <div class="flex gap-3 text-[10px] text-amber-700">
+                        <span><i class="fa-solid fa-file-invoice mr-1"></i>Commande</span>
+                        <span><i class="fa-solid fa-list-check mr-1"></i>Features</span>
+                        <span><i class="fa-solid fa-file-pdf mr-1"></i>Facture PDF</span>
+                        <span><i class="fa-solid fa-calendar mr-1"></i>Dates</span>
+                    </div>
+                </div>
+            </div>
+            <p class="mt-4 text-xs text-gray-600 text-center">Des que la commande est validee, subscribers notifie automatiquement bat-id avec toutes les informations de l'abonnement.</p>
+        </div>
+
     </div>
 
     {{-- Status --}}
