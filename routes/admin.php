@@ -51,6 +51,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Full access routes — blocked for api_user
         Route::middleware('admin.full')->group(function () {
             Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+            Route::post('/dashboard/run-tests', [AdminDashboardController::class, 'runTests'])->name('dashboard.run-tests');
 
             // Subscribers
             Route::get('/subscribers', [AdminSubscriberController::class, 'index'])->name('subscribers.index');

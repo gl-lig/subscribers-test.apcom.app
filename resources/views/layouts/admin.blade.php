@@ -23,7 +23,7 @@
             <nav class="mt-4 space-y-1 px-3">
                 @if(!$isApiUser)
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] transition hover:bg-white/10 {{ request()->routeIs('admin.dashboard') ? 'bg-white/10 text-batid-vert' : 'text-white/80' }}">
-                    <i class="fa-solid fa-house w-5 text-center"></i> Accueil
+                    <i class="fa-solid fa-microchip w-5 text-center"></i> Systeme
                 </a>
                 <a href="{{ route('admin.subscribers.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] transition hover:bg-white/10 {{ request()->routeIs('admin.subscribers.*') ? 'bg-white/10 text-batid-vert' : 'text-white/80' }}">
                     <i class="fa-solid fa-users w-5 text-center"></i> Abonnés

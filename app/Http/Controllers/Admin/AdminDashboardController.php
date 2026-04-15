@@ -3,44 +3,48 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
-use Illuminate\Support\Facades\DB;
+use App\Models\TestResult;
 
 class AdminDashboardController extends Controller
 {
     public function index()
     {
-        $activeSubscriptions = Order::where('status', 'active')
-            ->where('expires_at', '>', now())
-            ->count();
+        $results = TestResult::orderBy('suite')
+            ->orderBy('group')
+            ->orderBy('test_name')
+            ->get()
+            ->groupBy('group');
 
-        $todayOrders = Order::whereDate('concluded_at', today());
-        $todayCount = $todayOrders->count();
-        $todayAmount = $todayOrders->sum('price_paid');
+        $groupLabels = [
+            'DeeplinkService' => ['label' => 'Tokens & signatures HMAC', 'icon' => 'fa-key'],
+            'Models' => ['label' => 'Modeles de donnees', 'icon' => 'fa-database'],
+            'OrderService' => ['label' => 'Service de commande & prix', 'icon' => 'fa-calculator'],
+            'AdminAuth' => ['label' => 'Authentification admin', 'icon' => 'fa-lock'],
+            'AdminCrud' => ['label' => 'Back-office CRUD', 'icon' => 'fa-table-columns'],
+            'ApiRegister' => ['label' => 'API inscription', 'icon' => 'fa-user-plus'],
+            'Deeplink' => ['label' => 'API deeplink', 'icon' => 'fa-link'],
+            'DefaultSubscriptionApi' => ['label' => 'API abonnement par defaut', 'icon' => 'fa-star'],
+            'PublicRoutes' => ['label' => 'Routes publiques', 'icon' => 'fa-globe'],
+        ];
 
-        $monthOrders = Order::whereMonth('concluded_at', now()->month)
-            ->whereYear('concluded_at', now()->year);
-        $monthCount = $monthOrders->count();
-        $monthAmount = $monthOrders->sum('price_paid');
-
-        $expiringIn30Days = Order::where('status', 'active')
-            ->whereBetween('expires_at', [now(), now()->addDays(30)])
-            ->count();
-
-        $expiredNotRenewed = Order::where('status', 'expired')
-            ->whereNull('replaced_by_order_id')
-            ->where('expires_at', '>=', now()->subMonths(3))
-            ->count();
-
-        $failedJobs = DB::table('failed_jobs')->count();
+        $totalPassed = TestResult::where('status', 'passed')->count();
+        $totalFailed = TestResult::where('status', 'failed')->count();
+        $totalPending = TestResult::where('status', 'pending')->count();
+        $total = $totalPassed + $totalFailed + $totalPending;
+        $lastRun = TestResult::max('last_run_at');
 
         return view('admin.dashboard', compact(
-            'activeSubscriptions',
-            'todayCount', 'todayAmount',
-            'monthCount', 'monthAmount',
-            'expiringIn30Days',
-            'expiredNotRenewed',
-            'failedJobs'
+            'results', 'groupLabels',
+            'totalPassed', 'totalFailed', 'totalPending', 'total', 'lastRun'
         ));
+    }
+
+    public function runTests()
+    {
+        \Artisan::call('tests:run');
+        $output = \Artisan::output();
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Tests executes. ' . trim($output));
     }
 }
