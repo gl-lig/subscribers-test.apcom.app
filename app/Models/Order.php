@@ -63,6 +63,11 @@ class Order extends Model
         return $this->belongsTo(Order::class, 'replaced_by_order_id');
     }
 
+    public function replacesOrder()
+    {
+        return $this->hasOne(Order::class, 'replaced_by_order_id');
+    }
+
     public function isActive(): bool
     {
         return $this->status === 'active' && ($this->expires_at === null || $this->expires_at->isFuture());

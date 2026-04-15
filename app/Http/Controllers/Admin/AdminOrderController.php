@@ -12,7 +12,7 @@ class AdminOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with(['subscriber', 'subscriptionType.translations']);
+        $query = Order::with(['subscriber', 'subscriptionType.translations', 'replacedByOrder.subscriptionType.translations', 'replacesOrder']);
 
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
@@ -32,7 +32,7 @@ class AdminOrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['subscriber', 'subscriptionType.translations', 'metadata', 'paymentLogs']);
+        $order->load(['subscriber', 'subscriptionType.translations', 'metadata', 'paymentLogs', 'replacedByOrder.subscriptionType.translations', 'replacesOrder.subscriptionType.translations']);
         return view('admin.orders.show', compact('order'));
     }
 

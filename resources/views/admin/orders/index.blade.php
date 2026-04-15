@@ -49,10 +49,16 @@
                 <td class="px-4 py-3">
                     @if($order->status === 'active')
                         <span class="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">Actif</span>
+                        @if($order->replacesOrder)
+                            <div class="mt-1 text-[10px] text-gray-400">Remplace <a href="{{ route('admin.orders.show', $order->replacesOrder) }}" class="text-batid-bleu hover:underline">{{ $order->replacesOrder->order_number }}</a></div>
+                        @endif
                     @elseif($order->status === 'expired')
                         <span class="inline-flex rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">Expiré</span>
                     @else
                         <span class="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Remplacé</span>
+                        @if($order->replacedByOrder)
+                            <div class="mt-1 text-[10px] text-gray-400">Par <a href="{{ route('admin.orders.show', $order->replacedByOrder) }}" class="text-batid-bleu hover:underline">{{ $order->replacedByOrder->order_number }}</a> ({{ $order->replacedByOrder->subscriptionType?->translation('fr')?->name }}, {{ $order->replacedByOrder->concluded_at?->format('d.m.Y') }})</div>
+                        @endif
                     @endif
                 </td>
                 <td class="px-4 py-3 text-xs text-gray-500">{{ $order->starts_at->format('d.m.Y') }} → {{ $order->expires_at ? $order->expires_at->format('d.m.Y') : __('Illimité') }}</td>

@@ -10,7 +10,7 @@ class InvoiceService
 {
     public function generate(Order $order, string $locale = 'fr'): string
     {
-        $order->load(['subscriber', 'subscriptionType.translations']);
+        $order->load(['subscriber', 'subscriptionType.translations', 'replacesOrder.subscriptionType.translations']);
 
         $data = [
             'order' => $order,
@@ -18,6 +18,7 @@ class InvoiceService
             'type' => $order->subscriptionType,
             'typeName' => $order->subscriptionType->translation($locale)?->name ?? 'N/A',
             'locale' => $locale,
+            'replacesOrder' => $order->replacesOrder,
         ];
 
         $pdf = Pdf::loadView('pdf.invoice', $data);

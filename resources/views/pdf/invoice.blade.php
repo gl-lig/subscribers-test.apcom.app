@@ -173,6 +173,12 @@
         <tr><td>Periode</td><td>{{ $order->starts_at->format('d.m.Y') }} — {{ $order->expires_at ? $order->expires_at->format('d.m.Y') : 'Illimite' }}</td></tr>
     </table>
 
+    @if($replacesOrder)
+    <div style="margin-bottom:20px;padding:10px 12px;background:#fff8f0;border:1px solid #f0d9b5;font-size:9px;color:#7c5a2a;line-height:1.7;">
+        <strong>Cette commande remplace :</strong> {{ $replacesOrder->order_number }} — {{ $replacesOrder->subscriptionType?->translation($locale)?->name ?? '-' }} (du {{ $replacesOrder->starts_at->format('d.m.Y') }}{{ $replacesOrder->expires_at ? ' au ' . $replacesOrder->expires_at->format('d.m.Y') : '' }})
+    </div>
+    @endif
+
     <hr class="sep">
 
     {{-- PRICES --}}

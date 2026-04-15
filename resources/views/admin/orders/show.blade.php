@@ -18,6 +18,18 @@
                 @elseif($order->status === 'expired')<span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">Expiré</span>
                 @else<span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Remplacé</span>@endif
             </dd></div>
+            @if($order->status === 'replaced' && $order->replacedByOrder)
+            <div class="flex justify-between rounded-lg bg-amber-50 px-3 py-2 ring-1 ring-amber-200">
+                <dt class="text-xs text-amber-700">Remplacée par</dt>
+                <dd class="text-xs font-medium"><a href="{{ route('admin.orders.show', $order->replacedByOrder) }}" class="text-batid-bleu hover:underline">{{ $order->replacedByOrder->order_number }}</a> — {{ $order->replacedByOrder->subscriptionType?->translation('fr')?->name }} ({{ $order->replacedByOrder->concluded_at?->format('d.m.Y') }})</dd>
+            </div>
+            @endif
+            @if($order->replacesOrder)
+            <div class="flex justify-between rounded-lg bg-blue-50 px-3 py-2 ring-1 ring-blue-200">
+                <dt class="text-xs text-blue-700">Remplace</dt>
+                <dd class="text-xs font-medium"><a href="{{ route('admin.orders.show', $order->replacesOrder) }}" class="text-batid-bleu hover:underline">{{ $order->replacesOrder->order_number }}</a> — {{ $order->replacesOrder->subscriptionType?->translation('fr')?->name }} ({{ $order->replacesOrder->concluded_at?->format('d.m.Y') }})</dd>
+            </div>
+            @endif
             <div class="flex justify-between"><dt class="text-gray-500">bat-ID</dt><dd class="font-medium">{{ $order->subscriber->bat_id ?? '-' }}</dd></div>
             <div class="flex justify-between"><dt class="text-gray-500">Type</dt><dd>{{ $order->subscriptionType?->translation('fr')?->name ?? '-' }}</dd></div>
             <div class="flex justify-between"><dt class="text-gray-500">Durée</dt><dd>{{ $order->duration_months > 0 ? $order->duration_months . ' mois' : __('Illimitée') }}</dd></div>

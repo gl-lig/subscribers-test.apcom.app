@@ -28,7 +28,7 @@ class AdminSubscriberController extends Controller
     public function show(Subscriber $subscriber)
     {
         $subscriber->load([
-            'orders' => fn ($q) => $q->with(['subscriptionType.translations', 'paymentLogs'])->latest(),
+            'orders' => fn ($q) => $q->with(['subscriptionType.translations', 'paymentLogs', 'replacedByOrder.subscriptionType.translations', 'replacesOrder.subscriptionType.translations'])->latest(),
         ]);
 
         return view('admin.subscribers.show', compact('subscriber'));
