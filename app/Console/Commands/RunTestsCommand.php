@@ -168,7 +168,16 @@ class RunTestsCommand extends Command
 
         $process = new Process(
             ['php', 'vendor/bin/phpunit', '--log-junit', 'storage/app/test-results.xml'],
-            base_path()
+            base_path(),
+            [
+                'DB_CONNECTION' => 'sqlite',
+                'DB_DATABASE' => ':memory:',
+                'APP_ENV' => 'testing',
+                'CACHE_DRIVER' => 'array',
+                'SESSION_DRIVER' => 'array',
+                'QUEUE_CONNECTION' => 'sync',
+                'MAIL_MAILER' => 'log',
+            ]
         );
         $process->setTimeout(120);
         $process->run();
