@@ -23,14 +23,14 @@
             <nav class="mt-4 space-y-1 px-3">
                 @if(!$isApiUser)
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-white/10 {{ request()->routeIs('admin.dashboard') ? 'bg-white/10 text-batid-vert' : 'text-white/80' }}">
-                    <span>🏠</span> Accueil
+                    <i class="fa-solid fa-house w-5 text-center"></i> Accueil
                 </a>
                 <a href="{{ route('admin.subscribers.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-white/10 {{ request()->routeIs('admin.subscribers.*') ? 'bg-white/10 text-batid-vert' : 'text-white/80' }}">
-                    <span>👥</span> Abonnés
+                    <i class="fa-solid fa-users w-5 text-center"></i> Abonnés
                 </a>
                 <div x-data="{ open: {{ request()->routeIs('admin.subscription-types.*', 'admin.orders.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open" class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-white/80 transition hover:bg-white/10">
-                        <span class="flex items-center gap-3"><span>📦</span> Abonnements</span>
+                        <span class="flex items-center gap-3"><i class="fa-solid fa-box w-5 text-center"></i> Abonnements</span>
                         <svg class="h-4 w-4 transition" :class="open && 'rotate-90'" fill="currentColor" viewBox="0 0 20 20"><path d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"/></svg>
                     </button>
                     <div x-show="open" class="ml-6 space-y-1">
@@ -40,7 +40,7 @@
                 </div>
                 <div x-data="{ open: {{ request()->routeIs('admin.promo-codes.*', 'admin.user-groups.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open" class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-white/80 transition hover:bg-white/10">
-                        <span class="flex items-center gap-3"><span>🎟️</span> Promotions</span>
+                        <span class="flex items-center gap-3"><i class="fa-solid fa-ticket w-5 text-center"></i> Promotions</span>
                         <svg class="h-4 w-4 transition" :class="open && 'rotate-90'" fill="currentColor" viewBox="0 0 20 20"><path d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"/></svg>
                     </button>
                     <div x-show="open" class="ml-6 space-y-1">
@@ -49,14 +49,14 @@
                     </div>
                 </div>
                 <a href="{{ route('admin.payments.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-white/10 {{ request()->routeIs('admin.payments.*') ? 'bg-white/10 text-batid-vert' : 'text-white/80' }}">
-                    <span>💳</span> Paiements
+                    <i class="fa-solid fa-credit-card w-5 text-center"></i> Paiements
                 </a>
                 <a href="{{ route('admin.languages.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-white/10 {{ request()->routeIs('admin.languages.*') ? 'bg-white/10 text-batid-vert' : 'text-white/80' }}">
-                    <span>🌐</span> Langues
+                    <i class="fa-solid fa-globe w-5 text-center"></i> Langues
                 </a>
                 <div x-data="{ open: {{ request()->routeIs('admin.admins.*', 'admin.settings.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open" class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-white/80 transition hover:bg-white/10">
-                        <span class="flex items-center gap-3"><span>⚙️</span> Configuration</span>
+                        <span class="flex items-center gap-3"><i class="fa-solid fa-gear w-5 text-center"></i> Configuration</span>
                         <svg class="h-4 w-4 transition" :class="open && 'rotate-90'" fill="currentColor" viewBox="0 0 20 20"><path d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"/></svg>
                     </button>
                     <div x-show="open" class="ml-6 space-y-1">
@@ -67,7 +67,7 @@
                 @endif
                 <div x-data="{ open: {{ request()->routeIs('admin.logs.*', 'admin.api.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open" class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-white/80 transition hover:bg-white/10">
-                        <span class="flex items-center gap-3"><span>📋</span> {{ $isApiUser ? 'API' : 'Logs & API' }}</span>
+                        <span class="flex items-center gap-3"><i class="fa-solid fa-code w-5 text-center"></i> {{ $isApiUser ? 'API' : 'Logs & API' }}</span>
                         <svg class="h-4 w-4 transition" :class="open && 'rotate-90'" fill="currentColor" viewBox="0 0 20 20"><path d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"/></svg>
                     </button>
                     <div x-show="open" class="ml-6 space-y-1">
