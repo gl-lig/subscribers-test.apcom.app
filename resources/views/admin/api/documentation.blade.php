@@ -1,4 +1,14 @@
 @extends('layouts.admin')
+
+@push('head')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.1/build/css/intlTelInput.css">
+@endpush
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.1/build/js/intlTelInput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.1/build/js/utils.js"></script>
+@endpush
+
 @section('content')
 <div class="mx-auto max-w-4xl" x-data="{ tab: '{{ session('register_url') ? 'register' : (session('test_url') ? 'deeplink' : 'process') }}' }">
     <h1 class="mb-2 text-2xl font-bold text-batid-marine">Documentation API</h1>
@@ -484,9 +494,50 @@ final url = '{{ $baseUrl }}/deeplink?token=$encoded.$signature';</pre>
         @if($secretConfigured)
         <div class="mb-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
             <h2 class="mb-3 text-lg font-semibold text-batid-marine">Generateur de test</h2>
-            <p class="mb-3 text-sm text-gray-500">Chaque clic genere un numero de telephone et un bat-ID aleatoires.</p>
-            <form method="GET" action="{{ route('admin.api.test-register-token') }}">
-                <button type="submit" class="rounded-lg bg-batid-bleu px-4 py-2 text-sm text-white hover:bg-batid-marine">Generer une URL d'inscription test</button>
+            <p class="mb-3 text-sm text-gray-500">Saisissez un numero de telephone ou laissez vide pour en generer un aleatoire. Le bat-ID est toujours genere aleatoirement.</p>
+            <form method="GET" action="{{ route('admin.api.test-register-token') }}" x-data="{
+                iti: null,
+                init() {
+                    this.$nextTick(() => {
+                        const input = this.$refs.regPhone;
+                        if (!input || !window.intlTelInput) return;
+                        this.iti = window.intlTelInput(input, {
+                            initialCountry: 'ch',
+                            preferredCountries: ['ch', 'fr', 'de', 'it', 'at'],
+                            separateDialCode: true,
+                            nationalMode: true,
+                            formatOnDisplay: true,
+                            countrySearch: true,
+                            showFlags: true,
+                            useFullscreenPopup: false,
+                            loadUtilsOnInit: false,
+                        });
+                    });
+                },
+                submit(e) {
+                    if (this.iti) {
+                        const input = this.$refs.regPhone;
+                        if (input.value.trim()) {
+                            if (window.intlTelInputUtils) {
+                                this.$refs.regPhoneHidden.value = this.iti.getNumber(intlTelInputUtils.numberFormat.E164);
+                            } else {
+                                const dialCode = this.iti.getSelectedCountryData().dialCode;
+                                const national = input.value.replace(/\s/g, '');
+                                this.$refs.regPhoneHidden.value = '+' + dialCode + national.replace(/^0+/, '');
+                            }
+                        }
+                    }
+                }
+            }" @submit="submit($event)">
+                <div class="flex flex-wrap items-end gap-3">
+                    <div>
+                        <label class="mb-1 block text-xs text-gray-500">Telephone (optionnel)</label>
+                        <input type="tel" x-ref="regPhone" inputmode="tel" placeholder="79 123 45 67"
+                               class="rounded-lg border-gray-300 text-sm w-56">
+                        <input type="hidden" name="phone" x-ref="regPhoneHidden">
+                    </div>
+                    <button type="submit" class="rounded-lg bg-batid-bleu px-4 py-2 text-sm text-white hover:bg-batid-marine">Generer une URL d'inscription test</button>
+                </div>
             </form>
 
             @if(session('register_url'))

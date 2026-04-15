@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    @stack('head')
 </head>
 <body class="min-h-screen bg-gray-100 font-sans antialiased" x-data="{ sidebarOpen: false }">
     <div class="flex min-h-screen">
@@ -119,5 +120,6 @@
     <!-- Sidebar overlay -->
     <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-black/50 lg:hidden"></div>
     @livewireScripts
+    @stack('scripts')
 </body>
 </html>

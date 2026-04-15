@@ -88,8 +88,11 @@ class AdminLogController extends Controller
             return back()->with('error', 'DEEPLINK_SECRET n\'est pas configuré dans le fichier .env');
         }
 
-        // Generate random phone and bat-id for testing
-        $phone = '+4179' . rand(1000000, 9999999);
+        $phone = $request->query('phone');
+        if (empty($phone)) {
+            $phone = '+4179' . rand(1000000, 9999999);
+        }
+
         $batId = '@' . substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 7);
 
         $token = $deeplinkService->generateRegisterToken($phone, $batId);
