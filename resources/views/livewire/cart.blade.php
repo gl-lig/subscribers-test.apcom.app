@@ -1,4 +1,9 @@
-<div class="mx-auto max-w-3xl px-4 py-12">
+<div x-data="{
+    duration: @entangle('duration'),
+    allPrices: {{ Js::from($allPrices) }},
+    discounts: {{ Js::from($discounts) }},
+    fmt(v) { return parseFloat(v || 0).toFixed(2); }
+}" class="mx-auto max-w-3xl px-4 py-12">
     <a href="{{ route('home') }}" class="mb-8 inline-flex items-center text-sm text-batid-bleu hover:underline">&larr; {{ __('Retour aux abonnements') }}</a>
 
     <h1 class="mb-8 text-3xl font-bold text-batid-marine">{{ __('Votre panier') }}</h1>
@@ -33,17 +38,20 @@
         <h2 class="text-xl font-bold text-batid-marine">{{ $trans?->name ?? '' }}</h2>
         <p class="mt-1 text-sm text-gray-500">{{ $trans?->description ?? '' }}</p>
 
-        <!-- Duration selector -->
+        <!-- Duration selector (Alpine = instant) -->
         <div class="mt-6">
             <label class="mb-2 block text-sm font-medium text-gray-700">{{ __('Durée') }}</label>
             <div class="flex gap-2">
                 @foreach([12, 24, 36] as $d)
-                <button wire:key="cart-dur-{{ $d }}" wire:click="changeDuration({{ $d }})"
-                        class="relative flex-1 rounded-lg py-2.5 text-sm font-semibold transition {{ $duration === $d ? 'bg-batid-marine text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                <button @click="duration = {{ $d }}; $wire.changeDuration({{ $d }})"
+                        class="relative flex-1 rounded-lg py-2.5 text-sm font-semibold transition"
+                        :class="duration === {{ $d }} ? 'bg-batid-marine text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
                     {{ $d }} {{ __('mois') }}
-                    @if(($discounts[$d] ?? 0) > 0)
-                    <sup class="ml-0.5 inline-block rounded-full px-1.5 py-0.5 text-[9px] font-bold leading-none {{ $duration === $d ? 'bg-white text-batid-marine' : 'bg-batid-vert text-batid-marine' }}" style="vertical-align:super;">-{{ $discounts[$d] }}%</sup>
-                    @endif
+                    <template x-if="discounts[{{ $d }}] > 0">
+                        <sup class="ml-0.5 inline-block rounded-full px-1.5 py-0.5 text-[9px] font-bold leading-none"
+                             :class="duration === {{ $d }} ? 'bg-white text-batid-marine' : 'bg-batid-vert text-batid-marine'"
+                             style="vertical-align:super;" x-text="'-' + discounts[{{ $d }}] + '%'"></sup>
+                    </template>
                 </button>
                 @endforeach
             </div>
@@ -51,7 +59,13 @@
 
         <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
             <div><span class="text-gray-500">{{ __('Date de début') }}</span><p class="font-medium">{{ now()->format('d.m.Y') }}</p></div>
-            <div><span class="text-gray-500">{{ __('Date de fin') }}</span><p class="font-medium">{{ now()->addMonths($duration)->format('d.m.Y') }}</p></div>
+            <div><span class="text-gray-500">{{ __('Date de fin') }}</span>
+                <p class="font-medium">
+                    <template x-if="duration === 12">{{ now()->addMonths(12)->format('d.m.Y') }}</template>
+                    <template x-if="duration === 24">{{ now()->addMonths(24)->format('d.m.Y') }}</template>
+                    <template x-if="duration === 36">{{ now()->addMonths(36)->format('d.m.Y') }}</template>
+                </p>
+            </div>
         </div>
 
         <div class="mt-5 border-t pt-5">
@@ -59,27 +73,45 @@
         </div>
     </div>
 
-    <!-- Price breakdown -->
+    <!-- Price breakdown (Alpine = instant) -->
     <div class="mb-6 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
         <div class="space-y-3 text-sm">
-            <div class="flex justify-between"><span class="text-gray-600">{{ __('Prix catalogue TTC') }}</span><span>CHF {{ number_format($prices['price_catalogue'] ?? 0, 2) }}</span></div>
-            @if(($prices['discount_duration_pct'] ?? 0) > 0)
-            <div class="flex justify-between text-green-600"><span>{{ __('Rabais') }} {{ $prices['discount_duration_pct'] }}%</span><span>- CHF {{ number_format($prices['discount_duration_amount'] ?? 0, 2) }}</span></div>
-            <div class="flex justify-between"><span class="text-gray-600">{{ __('Sous-total') }}</span><span>CHF {{ number_format($prices['subtotal_after_duration'] ?? 0, 2) }}</span></div>
-            @endif
+            <div class="flex justify-between">
+                <span class="text-gray-600">{{ __('Prix catalogue TTC') }}</span>
+                <span>CHF <span x-text="fmt(allPrices[duration]?.price_catalogue)"></span></span>
+            </div>
+            <template x-if="(allPrices[duration]?.discount_duration_pct || 0) > 0">
+                <div>
+                    <div class="flex justify-between text-green-600">
+                        <span>{{ __('Rabais') }} <span x-text="allPrices[duration]?.discount_duration_pct"></span>%</span>
+                        <span>- CHF <span x-text="fmt(allPrices[duration]?.discount_duration_amount)"></span></span>
+                    </div>
+                    <div class="mt-3 flex justify-between">
+                        <span class="text-gray-600">{{ __('Sous-total') }}</span>
+                        <span>CHF <span x-text="fmt(allPrices[duration]?.subtotal_after_duration)"></span></span>
+                    </div>
+                </div>
+            </template>
             @if($promoValid)
-            <div class="flex justify-between text-green-600"><span>{{ __('Code promo') }} {{ $promoCode }} (-{{ $promoDiscount }}%)</span><span>- CHF {{ number_format($prices['discount_promo_amount'] ?? 0, 2) }}</span></div>
+            <div class="flex justify-between text-green-600">
+                <span>{{ __('Code promo') }} {{ $promoCode }} (-{{ $promoDiscount }}%)</span>
+                <span>- CHF <span x-text="fmt(allPrices[duration]?.discount_promo_amount)"></span></span>
+            </div>
             @endif
-            @if(($prices['prorata'] ?? 0) > 0)
-            <div class="flex justify-between text-green-600"><span>{{ __('Prorata résiduel abonnement actif') }}</span><span>- CHF {{ number_format($prices['prorata'], 2) }}</span></div>
-            @endif
+            <template x-if="(allPrices[duration]?.prorata || 0) > 0">
+                <div class="flex justify-between text-green-600">
+                    <span>{{ __('Prorata résiduel abonnement actif') }}</span>
+                    <span>- CHF <span x-text="fmt(allPrices[duration]?.prorata)"></span></span>
+                </div>
+            </template>
             <div class="flex justify-between border-t pt-3 text-lg font-bold text-batid-marine">
-                <span>{{ __('Total à payer TTC') }}</span><span>CHF {{ number_format($prices['total'] ?? 0, 2) }}</span>
+                <span>{{ __('Total à payer TTC') }}</span>
+                <span>CHF <span x-text="fmt(allPrices[duration]?.total)"></span></span>
             </div>
         </div>
-        @if(($prices['prorata'] ?? 0) > 0)
-        <p class="mt-3 text-xs text-gray-500">{{ __('Votre prorata de CHF :amount est immédiatement récupéré et déduit de votre nouvelle commande.', ['amount' => number_format($prices['prorata'], 2)]) }}</p>
-        @endif
+        <template x-if="(allPrices[duration]?.prorata || 0) > 0">
+            <p class="mt-3 text-xs text-gray-500">{{ __('Votre prorata est immédiatement récupéré et déduit de votre nouvelle commande.') }}</p>
+        </template>
     </div>
 
     <!-- Promo code -->
@@ -107,12 +139,12 @@
         </label>
         @error('cgv')<p class="text-sm text-red-600">{{ $message }}</p>@enderror
 
-        <button wire:click="processPayment" wire:loading.attr="disabled"
+        <button @click="$wire.processPayment(duration)" wire:loading.attr="disabled"
                 {{ !$cgvAccepted ? 'disabled' : '' }}
                 class="w-full rounded-full py-4 text-lg font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 style="background: linear-gradient(to right, #3DFF9E 0%, #0050FF 50%, #00004D 100%);"
                 >
-            <span wire:loading.remove>@if($type && $type->is_free){{ __('Confirmer') }}@else{{ __('Payer') }} CHF {{ number_format($prices['total'] ?? 0, 2) }}@endif</span>
+            <span wire:loading.remove>@if($type && $type->is_free){{ __('Confirmer') }}@else{{ __('Payer') }} CHF <span x-text="fmt(allPrices[duration]?.total)"></span>@endif</span>
             <span wire:loading class="flex items-center justify-center gap-2"><span class="spinner"></span> {{ __('Chargement...') }}</span>
         </button>
     </div>

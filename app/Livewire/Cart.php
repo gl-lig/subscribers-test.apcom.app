@@ -50,7 +50,6 @@ class Cart extends Component
     {
         $this->duration = $months;
         session()->put('selected_duration', $months);
-        $this->recalculate();
     }
 
     public function applyPromoCode(): void
@@ -86,11 +85,17 @@ class Cart extends Component
         $this->recalculate();
     }
 
-    public function processPayment(): void
+    public function processPayment(int $activeDuration): void
     {
         if (! $this->cgvAccepted) {
             $this->addError('cgv', __('Veuillez accepter les conditions générales de vente'));
             return;
+        }
+
+        // Sync duration from Alpine (client-side state)
+        if (in_array($activeDuration, [12, 24, 36])) {
+            $this->duration = $activeDuration;
+            session()->put('selected_duration', $activeDuration);
         }
 
         $this->processing = true;
@@ -201,14 +206,30 @@ class Cart extends Component
         $locale = app()->getLocale();
 
         $discounts = [];
+        $allPrices = [];
         if ($type) {
+            $orderService = app(OrderServiceInterface::class);
+            $currentOrder = null;
+
+            if ($this->isUpgrade) {
+                $subscriber = \App\Models\Subscriber::where('bat_id', session('bat_id'))->first();
+                $currentOrder = $subscriber?->activeOrder();
+            }
+
             foreach ([12, 24, 36] as $d) {
                 $disc = $type->discountForDuration($d);
                 $discounts[$d] = $disc > 0 ? intval($disc) : 0;
+
+                $allPrices[$d] = $orderService->calculatePrice(
+                    $type,
+                    $d,
+                    $this->promoValid ? $this->promoCode : null,
+                    $currentOrder
+                );
             }
         }
 
-        return view('livewire.cart', compact('type', 'locale', 'discounts'))
+        return view('livewire.cart', compact('type', 'locale', 'discounts', 'allPrices'))
             ->layout('layouts.app');
     }
 }

@@ -1,4 +1,9 @@
-<div>
+<div x-data="{
+    duration: 24,
+    prices: {{ Js::from($priceData) }},
+    maxDiscounts: {{ Js::from($maxDiscounts) }},
+    showModal: @entangle('showPhoneModal'),
+}">
     <!-- Hero -->
     <section class="py-16 text-center text-white" style="background: linear-gradient(to bottom, #00004D 0%, #0050FF 40%, #1B9FD2 65%, #2DD3B6 85%, #3DFF9E 100%);">
         <div class="mx-auto max-w-4xl px-4">
@@ -7,16 +12,19 @@
         </div>
     </section>
 
-    <!-- Duration selector -->
+    <!-- Duration selector (Alpine = instant) -->
     <div class="mx-auto -mt-6 max-w-md px-4">
         <div class="flex rounded-xl bg-white p-1.5 shadow-lg ring-1 ring-gray-200">
             @foreach([12, 24, 36] as $d)
-            <button wire:click="selectDuration({{ $d }})"
-                    class="relative flex-1 rounded-lg py-2.5 text-sm font-semibold transition {{ $selectedDuration === $d ? 'bg-batid-marine text-white shadow' : 'text-gray-600 hover:text-batid-marine' }}">
+            <button @click="duration = {{ $d }}"
+                    class="relative flex-1 rounded-lg py-2.5 text-sm font-semibold transition"
+                    :class="duration === {{ $d }} ? 'bg-batid-marine text-white shadow' : 'text-gray-600 hover:text-batid-marine'">
                 {{ __("$d mois") }}
-                @if(($maxDiscounts[$d] ?? 0) > 0)
-                <sup class="ml-0.5 inline-block rounded-full px-1.5 py-0.5 text-[9px] font-bold leading-none {{ $selectedDuration === $d ? 'bg-white text-batid-marine' : 'bg-batid-vert text-batid-marine' }}" style="vertical-align:super;">-{{ $maxDiscounts[$d] }}%</sup>
-                @endif
+                <template x-if="maxDiscounts[{{ $d }}] > 0">
+                    <sup class="ml-0.5 inline-block rounded-full px-1.5 py-0.5 text-[9px] font-bold leading-none"
+                         :class="duration === {{ $d }} ? 'bg-white text-batid-marine' : 'bg-batid-vert text-batid-marine'"
+                         style="vertical-align:super;" x-text="'-' + maxDiscounts[{{ $d }}] + '%'"></sup>
+                </template>
             </button>
             @endforeach
         </div>
@@ -32,8 +40,6 @@
         init() {
             this.measure();
             window.addEventListener('resize', () => this.measure());
-            document.addEventListener('livewire:navigated', () => this.$nextTick(() => this.measure()));
-            Livewire.hook('morph.updated', () => this.$nextTick(() => this.measure()));
         },
         measure() {
             const cards = this.$refs.track?.children;
@@ -87,12 +93,8 @@
                     @foreach($types as $type)
                     @php
                         $trans = $type->translation($locale);
-                        $baseMonthly = (float) $type->price_chf / 12;
-                        $totalPrice = $type->priceForDuration($selectedDuration);
-                        $monthlyPrice = $totalPrice / $selectedDuration;
                     @endphp
-                    <div wire:key="plan-{{ $type->id }}-{{ $selectedDuration }}"
-                         class="w-[82vw] md:w-[calc((100%-4rem)/3)] flex-shrink-0 flex flex-col rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200 transition hover:shadow-lg hover:ring-batid-bleu/30">
+                    <div class="w-[82vw] md:w-[calc((100%-4rem)/3)] flex-shrink-0 flex flex-col rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200 transition hover:shadow-lg hover:ring-batid-bleu/30">
                         <h3 class="text-xl font-bold text-batid-marine">{{ $trans?->name ?? 'N/A' }}</h3>
                         <p class="mt-2 text-sm text-gray-500">{{ $trans?->description ?? '' }}</p>
 
@@ -100,23 +102,21 @@
                             @if($type->is_free)
                             <span class="text-4xl font-extrabold text-batid-vert">{{ __('Gratuit') }}</span>
                             @else
-                            <span class="text-4xl font-extrabold text-batid-marine">CHF {{ number_format($monthlyPrice, 2) }}</span>
+                            <span class="text-4xl font-extrabold text-batid-marine">CHF <span x-text="prices[{{ $type->id }}].durations[duration].monthly"></span></span>
                             <span class="text-sm text-gray-500">/ {{ __('mois') }}</span>
                             @endif
                         </div>
 
                         @if(!$type->is_free)
-                            @if($selectedDuration > 12)
-                            <p class="mt-1 text-xs text-gray-400 line-through">CHF {{ number_format($baseMonthly, 2) }} / {{ __('mois') }}</p>
-                            @endif
-                            <p class="mt-1 text-xs text-gray-400">{{ __('Total') }}: CHF {{ number_format($totalPrice, 2) }} / {{ $selectedDuration }} {{ __('mois') }}</p>
+                            <p class="mt-1 text-xs text-gray-400 line-through" x-show="duration > 12">CHF {{ number_format((float) $type->price_chf / 12, 2) }} / {{ __('mois') }}</p>
+                            <p class="mt-1 text-xs text-gray-400">{{ __('Total') }}: CHF <span x-text="prices[{{ $type->id }}].durations[duration].total"></span> / <span x-text="duration"></span> {{ __('mois') }}</p>
                         @endif
 
                         <div class="mt-8 flex-1">
                             <x-subscription-features :type="$type" />
                         </div>
 
-                        <button wire:click="selectPlan({{ $type->id }})"
+                        <button @click="showModal = true; $wire.selectPlan({{ $type->id }}, duration)"
                                 class="mt-8 w-full rounded-full py-3.5 text-sm font-bold text-white transition hover:opacity-90"
                                 style="background: linear-gradient(to right, #3DFF9E 0%, #0050FF 50%, #00004D 100%);">
                             {{ __('Commander') }}
@@ -152,17 +152,28 @@
     </div>
 
     <!-- Phone modal -->
-    @if($showPhoneModal)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0,0,77,0.6); backdrop-filter: blur(8px);">
-        <div class="w-full max-w-md animate-fade-in-up rounded-2xl bg-white p-8 shadow-2xl">
+    <div x-show="showModal" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center p-4"
+         style="background: rgba(0,0,77,0.6); backdrop-filter: blur(8px);"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        <div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100">
             <div class="mb-6 flex items-center justify-between">
                 <h2 class="text-xl font-bold text-batid-marine">{{ __('Vérification de votre numéro') }}</h2>
-                <button wire:click="closeModal" class="text-gray-400 hover:text-gray-600">
+                <button @click="showModal = false; $wire.closeModal()" class="text-gray-400 hover:text-gray-600">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
+            @if($showPhoneModal)
             <livewire:phone-verification />
+            @endif
         </div>
     </div>
-    @endif
 </div>
