@@ -25,6 +25,7 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="MAIL_MAILER" value="log"/>
+        <env name="LOG_CHANNEL" value="null"/>
         <env name="DEEPLINK_SECRET" value="test-secret-key-for-phpunit"/>
         <env name="DEEPLINK_TTL" value="600"/>
     </php>
