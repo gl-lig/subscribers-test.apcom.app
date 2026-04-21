@@ -13,6 +13,7 @@ class ApiRegisterTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->withoutMiddleware(\Illuminate\Routing\Middleware\ThrottleRequests::class);
         config(['batid.deeplink_secret' => 'test-secret']);
         config(['batid.deeplink_ttl' => 600]);
         $this->deeplinkService = new DeeplinkService();
