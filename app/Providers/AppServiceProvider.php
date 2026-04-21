@@ -10,6 +10,7 @@ use App\Services\BatIdMockService;
 use App\Services\DatatransService;
 use App\Services\OrderService;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,7 +29,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $fromAddress = Setting::get('mail_from_address', config('mail.from.address'));
-        config(['mail.from.address' => $fromAddress]);
+        if (Schema::hasTable('settings')) {
+            $fromAddress = Setting::get('mail_from_address', config('mail.from.address'));
+            config(['mail.from.address' => $fromAddress]);
+        }
     }
 }
